@@ -1,0 +1,335 @@
+\chapter{Umsetzung\label{cha:chapter4}}
+\section{Architektur}
+Abb. \ref{img:Architektur} zeigt die realisierte Architektur der FSC. Auf der Kamera läuft eine Web-basierte Anwendung, die über die IP der Kamera und dem Port, auf dem die Anwendung läuft (standardmäßig 8000), aufgerufen werden kann. Nutzer haben die Möglichkeit, die Vorlagen für Cloud Services zu verwalten. Maschinen und Nutzer können die Bildaufnahme der Kamera auslösen. Nachdem ein Bild aufgenommen wurde, wird es an die vorher konfigurierten Services geschickt. Diese verarbeiten das Bild und schicken eine Antwort zurück, die je nach Konfiguration auf der SQLite Datenbank der Kamera gespeichert wird oder nicht. Sämtliche Kommunikation wird über HTTP abgewickelt, als Payload-Spezifikation wird JSON verwendet. Bei Bedarf kann das System weiter verbessert werden, indem die Antworten der Cloud Services direkt auf der Kamera verarbeitet werden und an Maschinen wie z.B. einen Roboterarm oder auch eine Speicherprogrammierbare Steuerung passend zugeschnittene Handlungsoptionen gesendet werden. Falls ein eigener Cloud Service implementiert wird, kann die Weiterverarbeitung in Handlungsoptionen auch extern erfolgen. Der Nutzer kann die Rohbilder und die Analysen der Cloud Services zur weiteren Informationsgewinnung von mehreren Kameras einholen um bspw. die Orientierung eines Objekts zu bestimmen. Das kann wiederum auch in der Cloud oder in einem lokalen Rechenzentrum erfolgen.
+\begin{figure}[]
+\includegraphics[width=\textwidth]{img/Architektur.pdf}
+\caption{Architekturschaubild der Future Smart Cam.}
+\label{img:Architektur}
+\end{figure}
+\newline
+
+\section{Inbetriebnahme der Kamera}
+Bei der verwendeten Kamera handelt es sich um die Orbecc Persee einer Smart-Camera. Es handelt sich hierbei um eine Kamera mit integrierten ARM-Prozessor. Als Betriebssystem wird Ubuntu mit der Version 18.04 verwendet. Es können 2D-Farbbilder und 3D-Tiefenbilder aufgenommen werden. Durch den ausreichend starken Prozessor ist es möglich die REST API direkt auf der Kamera zu installieren und zu betreiben.
+
+\section{Datenbank}
+Abb. \ref{img:Datenbank} zeigt ein Diagramm für die verwendete Datenbank der FSC. Felder markiert mit * bedeutet verpflichtende Eingabe. PK (Primary Key), Timestamp und Answer sind nicht vom Nutzer editierbar. Die Template Auswahlmöglichkeiten in Service sind \emph{Google Cloud Vision Label Detection, AWS Rekognition} oder \emph{Other}. Bei den ersten beiden Möglichkeiten muss jeweils nur ein passendes Authfile hochgeladen werden. Im Falle von \emph{Other} kann man einen eigenen Endpunkt konfigurieren über die ServiceURL und den Payload. Das Cloudservice Feld ist ein wählbarer, einzigartiger Name. In ImageToService muss genau ein Image hochgeladen werden, entweder in 2D oder 3D. Das Timestamp Feld wird automatisch befüllt. Das Service Feld ist über eine N zu M Beziehung zum Service Schema verbunden, d.h. man kann das Image an 0 bis M viele Services schicken. M wird allein durch die Länge des Antwortfeldes (10.000 Zeichen) beschränkt. Das Antwortfeld enthält die Liste der Antworten der Cloudservices, codiert in ein String umgewandeltes JSON oder Dict. Bei Bedarf kann dieser Rückgabewert z.B. durch die pygment Bibliothek in ein anschauliches Objekt umgewandelt werden.
+\begin{figure}[H]
+\includegraphics[]{Datenbankschema_ohne_image.pdf}
+\caption{Datenbank Diagramm für die FSC App.}
+\label{img:Datenbank}
+\end{figure}
+
+\section{REST API}
+
+\begin{displayquote}
+"The URL is a sentence, where resources are nouns and HTTP methods are verbs."\cite{Haldar_2018}
+\end{displayquote}
+
+\subsection{Generelle Features}
+\begin{itemize}
+\item Hierarchische Verlinkung von Listen- in Detailansicht eines Objektes.
+\item Validierung der Formulare auf korrekte Datentypen, URL etc.
+\item Bietet JSON und HTML Rückgabewerte und Formulare, d.h. die Schnittstelle bietet sowohl hohes Automatisierungspotential als auch ein nutzerfreundliches Frontend. Ob JSON oder HTML zurückgegeben wird, wird über den Header bestimmt.
+\item Zustandslose Schnittstelle. Bedeutet um vom einen Zustand in den nächsten zu kommen, sind dem Server bzw. Client alle nötigen Informationen bekannt. 
+\item Simple Möglichkeit, ein Benutzer- und Berechtigungssystem nachzurüsten. In diesem Projekt wird aber davon ausgegangen, dass die Kamera in der roten Zone eines produzierenden Unternehmens läuft und nur berechtigte Personen auf die Kamera zugreifen können. Somit ist die Schnittstelle einfacher zu bedienen.
+\item Nutzen eines großen Anteils der verfügbaren HTTP-Methoden. OPTIONS kann verwendet werden, um zu den einzelnen Feldern eines Formulars Metadaten einzusehen und so eine Hilfestellung zur Verwendung des Endpunktes zu erhalten. HEAD kann verwendet werden, um Performancetests durchzuführen oder die Verbindung zwischen Nutzer und Kamera zyklisch zu überprüfen - und das ohne großen Overhead.
+\end{itemize}
+
+\subsection{Schnittstellendefinition}
+\begin{itemize}[align=parleft, labelsep=2cm, label={}, leftmargin=1cm]
+	\item \textcolor{mypink1}{/api/v1/} 
+	\begin{enumerate}[align=parleft, labelsep=*, leftmargin=*]
+		\item[methods] ['GET', 'OPTIONS']
+        \item[GET] API Root. Liefert eine verlinkte Liste zu den API Endpunkten und im Falle einer HTML Rückgabe eine kurze Hilfe zur Bedienung der Schnittstelle. Beispielantwort:
+        \begin{minted}[
+                       framesep=3mm,
+                       xleftmargin=0pt,
+                       tabsize=4,
+                       samepage]{js}
+HTTP 200 OK
+Allow: OPTIONS, GET
+Content-Type: application/json
+Vary: Accept
+
+{
+    "overview": "http://127.0.0.1:8000/api/v1/overview/",
+    "image2service": "http://127.0.0.1:8000/api/v1/image2service/",
+    "nodb": "http://127.0.0.1:8000/api/v1/nodb/",
+    "services": "http://127.0.0.1:8000/api/v1/service/"
+}
+\end{minted}
+\item[OPTIONS] Gibt mögliche render- und parse Möglichkeiten zurück. Beispielantwort:
+\begin{minted}[
+               framesep=3mm,
+               xleftmargin=0pt,
+               tabsize=4]{js}
+HTTP 200 OK
+Allow: OPTIONS, GET
+Content-Type: application/json
+Vary: Accept
+
+{
+    "name": "Api Root",
+    "description": "Administer your images...",
+    "renders": [
+        "application/json",
+        "text/html"
+    ],
+    "parses": [
+        "application/json",
+        "application/x-www-form-urlencoded",
+        "multipart/form-data"
+    ]
+}
+        \end{minted}
+
+	\end{enumerate}
+    
+ 
+     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
+    	\item \textcolor{mypink1}{/api/v1/service/} 
+	\begin{enumerate}[align=parleft, labelsep=*, leftmargin=*]
+		\item[methods] ['GET', 'POST', 'HEAD', 'OPTIONS']
+        \item[GET] Liefert die Daten zu allen Services wie Name, Link zur Schnittstelle, Beschreibung, ID, und Authentifizierung. Beispielantwort:
+                \begin{minted}[
+                       framesep=3mm,
+                       xleftmargin=0pt,
+                       tabsize=4]{js}
+HTTP 200 OK
+Allow: GET, POST, HEAD, OPTIONS
+Content-Type: application/json
+Vary: Accept
+
+{
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "url": "http://127.0.0.1:8000/api/v1/service/1/",
+            "template": "GCV",
+            "cloudservice": "Google",
+            "serviceurl": "",
+            "payload": "",
+            "authfile": "http://127.0.0.1:8000/media/static/..."
+        }
+    ]
+}
+        \end{minted}
+        \item[POST] Fügt einen neuen Service hinzu. Man kann in templates einen der beiden vorbereiteten Schnittstellen AWS Rekognition oder Google Cloud Vision Label Detection auswählen oder einen Endpunkt selbst definieren. Sofern einer der vorbereiteten ausgewählt wird, ist nur eine Authentifizierungsdatei vonnöten. Andernfalls kann man über das Service-URL \& Payload Feld eine eigene POST anfrage definieren. Für die Authentifizierungsdatei für Google Cloud Vision siehe \url{https://cloud.google.com/vision/docs/auth}, für AWS \url{https://docs.aws.amazon.com/rekognition/latest/dg/setup-awscli-sdk.html}. Für die selbstdefinierte Anfrage wird die python request library verwendet (\url{http://docs.python-requests.org/en/latest/user/quickstart/}). Das cloudservice Feld ist verpflichtend. Beispielantwort siehe GET.
+        \item[HEAD] Wie GET, nur ohne Antwortinhalt, allein der Header wird zurückgegeben. Gibt mögliche render- und parse Möglichkeiten zurück.
+        \item[OPTIONS] Gibt mögliche render-, parse und Aktionsmöglichkeiten zurück. Zeigt sämtliche Felder des Schemas und deren Metainformationen (required, read-only...) an. Mögliche Aktionen (GET, POST...) werden angezeigt. Beispielantwort:
+\begin{minted}[
+                       framesep=3mm,
+                       xleftmargin=0pt,
+                       tabsize=4]{js}
+{
+    "name": "Service List",
+    "description": "",
+    "renders": [
+        "application/json",
+        "text/html"
+    ],
+    "parses": [
+        "application/json",
+        "application/x-www-form-urlencoded",
+        "multipart/form-data"
+    ],
+    "actions": {
+        "POST": {
+            "url": {
+                "type": "field",
+                "required": false,
+                "read_only": true,
+                "label": "Url"
+            },
+            "template": {
+                "type": "choice",
+                "required": true,
+                "read_only": false,
+                "label": "Template*",
+                "help_text": "...",
+                "choices": [
+                    {
+                        "value": "GCV",
+                        "display_name": "Google Cloud Vision label detection"
+                    },
+                    {
+                        "value": "AWS",
+                        "display_name": "AWS Rekognition label detection"
+                    },
+                    {
+                        "value": "OTHER",
+                        "display_name": "Other"
+                    }
+                ]
+            }
+            ...
+\end{minted}
+	\end{enumerate}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item \textcolor{mypink1}{/api/v1/service/< int : service id >/} 
+	\begin{enumerate}[align=parleft, labelsep=*, leftmargin=*]
+		\item[methods] ['GET', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']
+        \item[GET] Liefert die Daten zu einem Service mit Namen, Link zum Service, Payload, Authentifierung und ID. Beispielantwort wie GET /api/v1/service/.
+        \item[PUT] Überschreibt das aktuelle Bild. Nur die service id (der Primary Key) bleibt erhalten, der restliche Inhalt wird überschrieben. Beispielantwort wie POST /api/v1/service/, nur mit Status 200 OK.
+        \item[PATCH] Fügt einzelne Werte zu Feldern hinzu. Werte können auch überschrieben werden. Beispiel: zum Service mit ID 1 soll eine description "Dies ist Service 1" hinzugefügt werden. Dies kann z.B. mit folgendem Befehl ausgeführt werden (vorausgesetzt httpie ist installiert): 
+http --form PATCH\\
+http://IP:PORT/api/v1/service/1/ description="Dies ist Service 1"´. Beispielantwort wie PUT /api/v1/service/.
+		\item[DELETE] Löscht den Service. Beispielantwort:
+	                        \begin{minted}[
+                       framesep=3mm,
+                       xleftmargin=0pt,
+                       tabsize=4]{js}
+HTTP 204 No Content
+Allow: GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+Content-Type: application/json
+Vary: Accept
+        \end{minted}	
+        \item[HEAD] Wie GET, nur ohne Antwortinhalt, allein der Header wird zurückgegeben.
+        \item[OPTIONS] Gibt mögliche render- und parse Möglichkeiten zurück. Zeigt sämtliche Felder des Schemas und deren Metainformationen (required, read-only...) an. Mögliche Aktionen (GET, POST...) werden angezeigt. Beispielantwort siehe OPTIONS /api/v1/service/.
+        \end{enumerate}
+     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+     
+     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
+    	\item \textcolor{mypink1}{/api/v1/image2service/}
+	\begin{enumerate}[align=parleft, labelsep=*, leftmargin=*]
+		\item[methods] ['GET', 'POST', 'HEAD', 'OPTIONS']
+        \item[GET] Liefert die Daten zu allen Bildern wie Name, Link zum Bild, Beschreibung, ID, Aufnahmedatum und ausgewählten Services. Die Antwort(en) des (der) Services ist (sind) im answer-Feld persistiert.Beispielantwort:  
+        \begin{minted}[
+                       framesep=3mm,
+                       xleftmargin=0pt,
+                       tabsize=4,
+                       samepage]{js}
+HTTP/1.1 200 OK
+Allow: GET, POST, HEAD, OPTIONS
+Content-Length: 768
+Content-Type: application/json
+Date: Fri, 31 Aug 2018 20:45:31 GMT
+Server: WSGIServer/0.2 CPython/3.5.2
+Vary: Accept, Cookie
+X-Frame-Options: SAMEORIGIN
+
+{
+"count": 4,
+"next": null,
+"previous": null,
+"results": [
+    {
+        "url": "http://127.0.0.1:8000/api/v1/image/4/",
+        "name": "Cat",
+        "id": 4,
+        "timestamp": "2018-08-31T22:51:09.179753+02:00",
+        "description": "Cat with Caption",
+        "image2D": "http://127.0.0.1:8000/media/images2D/images.png",
+        "image3D": null
+        "answer": "GCV: Cat"
+    }
+    ...
+  ]
+  }
+        \end{minted} 
+        \item[POST] Fügt ein neues Bild hinzu und sendet es an ausgewählte Services. Genau ein Bild (2D oder 3D) muss hochgeladen werden. Beispielantwort wie GET nur mit Statuscode 201.
+     \item[HEAD] Wie GET, nur ohne Antwortinhalt, allein der Header wird zurückgegeben. Gibt mögliche render- und parse Möglichkeiten zurück.
+        \item[OPTIONS] Gibt mögliche render- und parse Möglichkeiten zurück. Zeigt sämtliche Felder des Schemas und deren Metainformationen (required, read-only...) an. Mögliche Aktionen (GET, POST...) werden angezeigt.
+        
+	\end{enumerate}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    	\item \textcolor{mypink1}{/api/v1/overview/} 
+        \begin{enumerate}[align=parleft, labelsep=*, leftmargin=*]
+		\item[methods] ['GET', 'OPTIONS']
+        \item[GET] Liefert eine Auflistung aller Schemas und deren Inhalten. Beispielantwort:
+        \begin{minted}[
+                       framesep=3mm,
+                       xleftmargin=0pt,
+                       tabsize=4,
+                       samepage]{js}
+HTTP 200 OK
+Allow: GET, HEAD, OPTIONS
+Content-Type: application/json
+Vary: Accept
+
+{
+  "highest_count": 4,
+  "overall_total": 6,
+  "next": null,
+  "previous": null,
+  "results": {
+      "Image2Service": [],
+      "Service": [
+          {
+              "url": "http://127.0.0.1:8000/api/v1/service/1/",
+              "id": 1,
+              "cloudplatform": "Google",
+              "serviceurl": "http://amazon.com",
+              "username": "admin",
+              "password": "as",
+              "authfile": null
+          },
+          {
+              "url": "http://127.0.0.1:8000/api/v1/service/2/",
+              "id": 2,
+              "cloudplatform": "Google",
+              "serviceurl": "",
+              "username": "",
+              "password": "",
+              "authfile": null
+          }
+      ]
+  }
+}
+        \end{minted}
+        \item[OPTIONS] Gibt mögliche render- und parse Möglichkeiten zurück. Zeigt sämtliche Felder des Schemas und deren Metainformationen (required, read-only...) an. Mögliche Aktionen (GET, POST...) werden angezeigt.
+
+
+	\end{enumerate}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textcolor{mypink1}{/api/v1/nodb/} 
+	\begin{enumerate}[align=parleft, labelsep=*, leftmargin=*]
+		\item[methods] ['POST']
+        \item[POST] Dieser Endpunkt erlaubt nur POST, da die Datenbank nicht genutzt wird, weder um Daten aufzurufen noch um sie zu speichern. Bei allen anderen Endpunkten werden die GET, POST, PUT, PATCH und DELETE HTTP Methoden in die datenbankspezifischen CRUD Methoden Create, Retrieve, Update und Delete umgewandelt. Da die Datenbank nicht genutzt wird, kann auch keine Resource abgerufen werden, ergo ist kein GET erlaubt. Man kann auswählen, ob man ein 2D oder 3D Bild machen möchte. Dieses Bild kann man an einer der beiden vorbereiteten Schnittstellen (AWS Rekognition oder Google Cloud Vision Label Detection) oder an eine selbstdefinierte schicken. Sofern einer der vorbereiteten ausgewählt wird, ist nur eine Authentifizierungsdatei vonnöten. Andernfalls kann man über das URL \& Payload Feld eine eigene Post anfrage definieren. Für die Authentifizierungsdatei für Google Cloud Vision siehe \url{https://cloud.google.com/vision/docs/auth}, für AWS \url{https://docs.aws.amazon.com/rekognition/latest/dg/setup-awscli-sdk.html}. Für die selbstdefinierte Anfrage wird die python request library verwendet (\url{http://docs.python-requests.org/en/latest/user/quickstart/}).
+    \end{enumerate}
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Typische Anwendungsfälle}
+Die zwei häufigsten Abläufe, die Schnittstelle zu bedienen, werden hier beschrieben. Sie unterscheiden sich in der Persistenz der Bilder und Service-Antworten. Der erste Schritt, das Verwalten und Hochladen der Services ist für beide Abläufe der gleiche:
+\subsubsection{Service-Verwaltung}
+Navigieren Sie zu /api/v1/service/. Dort haben Sie die Möglichkeit, über POST einen neuen Service hinzufügen oder bestehende Services zu verwalten durch Verlinkung auf die einzelnen Detailansichten in /api/v1/service/< int : service id >/. Über das grafische Frontend wird Ihnen zu jedem Feld eine kurze Hilfe angezeigt. Eine Formularvalidierung wird beim POST-Befehl ausgeführt. Ein Screenshot des Formulars ist in \ref{fig:postservice} abgebildet.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{img/Screenshot_POST_Service_Formular.jpg}
+    \caption{Screenshot POST Service Formular für das grafische Frontend.}
+    \label{fig:postservice}
+\end{figure}
+Nun haben Sie zwei Möglichkeiten für das weitere Vorgehen:
+\subsubsection{Persistente Methode}
+Navigieren Sie zu /api/v1/image2service/ um dort ein 2D oder 3D Bild hochzuladen oder mit der Kamera aufzunehmen. Im gleichen Formular wählen Sie einen oder mehrere Services aus, an die Sie das Bild senden möchten. Die Antwort wird im \emph{answer}-Feld gespeichert. Im Nachgang können Sie das Bild und die Antworten der Services über /api/v1/image2service/< int : image2service id >/ aufrufen und verändern.
+\subsubsection{Nicht-persistente Methode}
+Navigieren Sie zu /api/v1/nodb/ (bzw. \emph{Non persistent Image to Service} in der Navigationsleiste) um dort ein 2D oder 3D mit der Kamera aufzunehmen. Im gleichen Formular wählen Sie einen oder mehrere Services aus, an die Sie das Bild senden möchten. Die Antwort und das Bild werden \textbf{nicht} gespeichert. Sie werden einmal ausgegeben und danach können Sie sie nicht mehr aufrufen oder bearbeiten.
+
+\section{Frontend}
+Die Benutzerschnittstelle ist eine HTML Repräsentation der REST Schnittstelle. Sie wurde intuitiv und verlinkt gestaltet. Ein Screenshot der landing page ist in \ref{fig:apiroot} dargestellt.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{img/Screenshot_API_Root.jpg}
+    \caption{Screenshot der Landing Page.}
+    \label{fig:apiroot}
+\end{figure}
+Beim Aufruf der URL der Kamera wird auf diese Seite umgeleitet. Von dort erhält der Nutzer eine Hilfe zur Bedienung. Über die Navigationsleiste sind die einzelnen Endpunkte der API ansprechbar, was jeweils dem GET Befehl mit angeforderter HTML Rückgabe entspricht. Ein Formular für POST ist für die jeweilige Listenansicht verfügar, damit lässt sich ein neues Objekt (bspw. Service oder Bild) hinzufügen. In der Detailansicht eines Objektes kann das Objekt selber über PUT oder PATCH verändert oder über DELETE gelöscht werden (siehe \ref{fig:servicedetail}). 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{img/Screenshot_Service_Detail.jpg}
+    \caption{Screenshot der Service Detail-Ansicht.}
+    \label{fig:servicedetail}
+\end{figure}
+Unter der Navigationsleiste hilft noch eine Breadcrumb Navigation durch die unterschiedlichen Hierarchien der Seite. Bspw. ist der Ablauf einer Klickreihenfolge durch \emph{Api Root / Service List / Service Detail} rückverfolgbar.
+
+\section{Betreuung und Projektorganisation}
+
+Für die Organisation des Projekts haben wir uns aufgrund der geringen Gruppengröße von zwei Personen auf gleichgestellte Gruppenpartner geeinigt. Ein Projektkoordinator oder andere Rollen waren nicht notwendig.\newline
+
+Die Arbeitspakete wurden von allen Gruppenmitgliedern zum Teil parallel unter ständigem Austausch bearbeitet, einige wurden hauptsächlich einer Person übergeben. \newline 
+
+Die benutzte Software für die Dokumentation ist Overleaf, da TeX-Dokumente gleichzeitig bearbeitet werden können. Für die Literaturrecherche haben wir uns für Zotero entschieden. Datenaustausch geschieht über tubCloud, da mit 20\,GB ein großer Speicherplatz zur Verfügung steht im Vergleich zu bspw. Dropbox mit 4\,GB. Des Weiteren sind die Daten auf Servern der TU Berlin gespeichert und werden nicht an Dritte wie z.B. iCloud oder OneDrive übergeben.
