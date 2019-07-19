@@ -81,3 +81,9 @@ As of now, the image acquisition containers do not have a standardized interface
 
 \section{Orchestration of Recipe Management}
 The recipe, image acquisition- and  detector containers combine to recipe management of the OPC UA Vision server. As recipes handle image acquisition and detector container calling, one could say it serves as an orchestrator and is a single point of failure. A possible hazard would be applying too much application logic to the recipe, thus it should stay simple and only run necessary OD steps by calling the containers in sequence with a standardized interface. This maximizes cohesion of the components. In case putting several trained detector containers in sequence, the output of the Test method would have to be abstracted since the second and following containers would receive a pose of an object as input which is unlikely useful. Abstracting output types would again shift application logic to the recipe which should be minimized. Hence, sequencing OD containers should be scoped in a container which handles the sequencing internally and is externally callable via Train & Test methods.
+
+\section{The involved Parties}
+\label{sec:involvedparties}
+\subsection{Detector Provider}
+\subsection{Camera Provider}
+\subsection{Recipe Managemer}
