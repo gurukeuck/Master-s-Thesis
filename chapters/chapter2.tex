@@ -1,8 +1,7 @@
 \chapter{State of the Art\label{cha:chapter2}}
-
 \section{Object Detection Methods}
 State of the art object detection methods include \textit{scale invariant feature transformation} (SIFT) \cite{Lowe2004DistinctiveKeypoints}, \textit{speeded up robust features} (SURF) \cite{Bay2008Speeded-UpSURF}, \textit{binary robust invariant scalable
-keypoints} (BRISK) \cite{Leutenegger2011BRISK:Keypoints}, \textit{oriented fast and rotated BRIEF} (ORB) \cite{Rublee2011ORB:SURF}, \textit{Accelerated KAZE} (AKAZE, KAZE meaning wind in Japanese) \cite{Alcantarilla2012KAZEFeatures, Alcantarilla2013FastSpaces} and \textit{template matching} (TM) \cite{Brunelli2009TemplatePractice}. The two latter shall be discussed here briefly.\newline
+keypoints} (BRISK) \cite{Leutenegger2011BRISK:Keypoints}, \textit{oriented fast and rotated BRIEF} (ORB) \cite{Rublee2011ORB:SURF}, \textit{Accelerated KAZE} (AKAZE, KAZE meaning wind in Japanese) \cite{Alcantarilla2012KAZEFeatures, Alcantarilla2013FastSpaces} and \textit{template matching} (TM) \cite{Brunelli2009TemplatePractice}. The two latter shall be discussed here briefly.\\
 
 AKAZE feature matching is a pyramidal object detection algorithm. The Pyramidal approach declines the image ratio with every filtering step. Spanning over several scales features are detected and described. In contrast to other established algorithms like SIFT, which use a linear scale space for filtering, AKAZE instead uses a nonlinear scale space with the recently developed numerical model \textit{Fast Explicit Diffusion}. The advantage of the nonlinear scale space is depicted in figure  \ref{skalenraum}. Prominent features like edges and corners are preserved. 
 \begin{figure}[ht]
@@ -170,7 +169,7 @@ This is also the main issue about gateway middleware, as established in the rela
 works-section. Because they lack transparency, there is a heavy leakage of endpoint semantics present, which often forces the consumer to understand both the gateway interface
 and the endpoint interface. As this creates a semantic dependency, interoperability solutions such as gateway middleware only tend to move the problem rather than solve it.
 
-\begin{table}[]
+\begin{table}
     \centering
     \begin{tabular}{|c|cccc|}
     \hline
