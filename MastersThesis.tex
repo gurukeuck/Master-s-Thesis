@@ -51,23 +51,23 @@
 \definecolor{mypink1}{rgb}{0.858, 0.188, 0.478}
 
 %morpholical box
-\usepackage{tikz}
-\usetikzlibrary{matrix}
+% \usepackage{tikz}
+% \usetikzlibrary{matrix}
 
-\newcommand\zeilenabstand{\normalbaselineskip}
+% \newcommand\zeilenabstand{\normalbaselineskip}
 
-\newcommand\grafik[2]{%
-  \begin{minipage}{2cm}
-    \centering\smash{\raisebox{\tabcolsep}{#1}}%
-    \includegraphics[width=\linewidth,height=2cm]{#2}%
-  \end{minipage}%
-}
+% \newcommand\grafik[2]{%
+%   \begin{minipage}{2cm}
+%     \centering\smash{\raisebox{\tabcolsep}{#1}}%
+%     \includegraphics[width=\linewidth,height=2cm]{#2}%
+%   \end{minipage}%
+% }
 
-\tikzset{vp/.style={circle,fill,inner sep=3pt}}
-\newcommand\verbindungslinie[3]{
-  \foreach [remember=\p as \lastp (initially #2)] \p in {#3}
-    \draw[#1](\lastp.center)node[vp]{}--(\p.center)node[vp]{};
-}
+% \tikzset{vp/.style={circle,fill,inner sep=3pt}}
+% \newcommand\verbindungslinie[3]{
+%   \foreach [remember=\p as \lastp (initially #2)] \p in {#3}
+%     \draw[#1](\lastp.center)node[vp]{}--(\p.center)node[vp]{};
+% }
 %end morphological box
 
 \onehalfspacing
