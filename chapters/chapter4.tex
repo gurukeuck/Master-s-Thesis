@@ -1,1 +1,35 @@
 \chapter{Implementation\label{cha:chapter4}}
+A proof of concept implementation of the concept introduced in \ref{cha:chapter3} is documented here. The code is available here: https://github.com/gurukeuck/Master-s-Thesis
+
+\section{Virtualization Technology: Docker}
+Realizing a SOA calls for means of decoupling the components. Docker is the technology which was used here for following reasons:
+\begin{itemize}
+    \item Dependencies of components are handled smoothly. Every docker image can pull the packages and system variables it needs as specified in the dockerfile. E.g. one detector may depend on openCV 2.7.1 while another detector depends on 1.8. Both docker images that are built using their respective dockerfile are independent of each other. If no virtualization technology would by used here, a dependency handling for the whole framework would be necessary. In the case of two openCV versions just a slight modification of the framework may be necessary. A more drastic example would be detectors that rely on different .NET frameworks which might not be able to coexist on a system.
+    \item Platform independency. A platform in this context means the operating system, e.g. Windows or Linux. The independency is twofold. Firstly, the docker engine runs on multiple platforms (TODO), so the environment which implements this framework 
+    Warum docker?
+	- (Fast) Paltformunabhängig
+	- Eigenes netzwerk
+	- Orchestrierbar
+	- Alle requirements vorhanden (man muss kein sprachen und pakete/abhängigkeiten laden
+	- Kann man public machen für detector provider
+	- Mit Nvidia docker + cuda programmiertechnik kann man GPU für Berechnungnen hinzuziehen
+
+Docker contra:
+Bindung an docker
+\end{itemize}
+
+
+\section{Inter-Service Communication: gRPC}
+
+\section{Programming Language: Python}
+For implenting a proof of concept of the concept created in \ref{cha:chapter3}, a programming language meeting multiple requirements is mandatory. \\
+
+\subsection{Support for Docker}
+
+\subsection{Support for gRPC}
+
+\section{Object Detection Methods used}
+\section{Class diagram}
+\section{Package diagram}
+\section{Sequence Diagram}
+\section{Differences to OPC UA Vision Specification}
