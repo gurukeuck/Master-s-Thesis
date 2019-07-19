@@ -32,6 +32,8 @@
 \input{./misc/hyphenation} 					% use this file to set explicit hyphenations (doesn't seem to work correctly)
 
 %% Useful packages
+\usepackage{geometry}
+\usepackage{diagbox}
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage[colorinlistoftodos]{todonotes}
@@ -47,6 +49,27 @@
 \usepackage[]{acronym}
 \usepackage{setspace}
 \definecolor{mypink1}{rgb}{0.858, 0.188, 0.478}
+
+%morpholical box
+\usepackage{tikz}
+\usetikzlibrary{matrix}
+
+\newcommand\zeilenabstand{\normalbaselineskip}
+
+\newcommand\grafik[2]{%
+  \begin{minipage}{2cm}
+    \centering\smash{\raisebox{\tabcolsep}{#1}}%
+    \includegraphics[width=\linewidth,height=2cm]{#2}%
+  \end{minipage}%
+}
+
+\tikzset{vp/.style={circle,fill,inner sep=3pt}}
+\newcommand\verbindungslinie[3]{
+  \foreach [remember=\p as \lastp (initially #2)] \p in {#3}
+    \draw[#1](\lastp.center)node[vp]{}--(\p.center)node[vp]{};
+}
+%end morphological box
+
 \onehalfspacing
 \Huge
 \begin{document}
@@ -75,14 +98,14 @@
     \tableofcontents
     \thispagestyle{empty}
     
-    % \include{./misc/acronyms}
-    % \thispagestyle{empty}
+    \include{./misc/acronyms}
+    \thispagestyle{empty}
     
-    % \listoffigures
-    % \thispagestyle{empty}
+    \listoffigures
+    \thispagestyle{empty}
     
-    % \listoftables
-    % \thispagestyle{empty}
+    \listoftables
+    \thispagestyle{empty}
     
     
 % --------------------------------------------------------------
@@ -98,13 +121,13 @@
     % \input{./chapters/chapter7}
 
 % ---------------------------------------------------------------
-\backmatter % no page numbering from here
+%\backmatter % no page numbering from here
 		
 		% if you want to provide a glossary with explanations of important terms put it in here
 
     \bibliographystyle{vancouver}
     \bibliography{./bib/references}
     
-    % \input{./misc/annex}
+    \input{./misc/annex}
 
 \end{document}

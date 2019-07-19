@@ -1,81 +1,46 @@
-\chapter*{Anhang}
+\appendix
 
-\begin{appendix}
+\chapter{Example for a recipe life cycle}
+To illustrate the above remarks on recipe management, here is a possible life cycle of a recipe: Note that the 
+method signatures are not necessarily exact here. 
+\begin{enumerate}
+    \item A recipe for ProductId-m is created externally (often centrally). 
+    \item The recipe is pushed to the vision system with ExternalId-1, ProductId-m (using AddRecipe())
+    \begin{itemize}
+        \item It is stored there with ExternalId-1, InternalId-11.
+        \item It is linked to ProductId-m on the vision system
+    \end{itemize}
+    \item There are further possible actions on the recipe without any particular order.
+    \begin{itemize}
+        \item The recipe may be edited locally later, keeping its ExternalId-1 and receiving InternalId-12.
+        \item A (binary) different version of the recipe with the same ExternalId-1 may be pushed to the vision system later, receiving InternalId-13.
+        \item The recipe may be linked later to ProductId-n on the vision system. Note that the external recipe 
+        management does not concern itself with the InternalIds of the recipes on different vision systems. If 
+        there are, due to one of these operations, several recipes on the vision system with identical 
+        ExternalIds but different InternalIds, the vision system/server combination has no means of telling 
+        which of these was targeted by the environment. It may choose to link all of them, or the newest one, 
+        or the latest one pushed (ignoring internally edited ones). This is outside the scope of this specification.
+    \end{itemize}
+    \item The automation system is undergoing a change-over process to a specific product, namely ProductId-m. It 
+    will re-tool the vision system
+    \begin{itemize}
+    \item by calling PrepareRecipe(ExternalId-1); the vision system then selects one of the existing recipes with 
+    ExternalId-1 based on internal rules.
+    \item by calling PrepareRecipe(ProductId-m); the vision system then selects one of the existing recipes 
+    linked to ProductId-m based on internal rules. 
+    \end{itemize}
+    \item The vision system is commanded to process a specific product
+    \begin{itemize}
+        \item by calling StartJob(ExternalId-1); the vision system then starts processing with the recipe prepared for ExternalId-1. 
+        \item by calling StartJob(ProductId-m); the vision system then starts processing with the recipe prepared for ProductId-m. 
+        \item by calling StartJob(ExternalId-2); the vision system then throws an error because no such recipe has 
+        been added or prepared.
+        \item by calling StartJob(ProductId-p); the vision system then throws an error because no such recipe has 
+        been added or prepared. 
+    \end{itemize}
+    \item If there is no error, the vision system carries out its task, going through the Executing state to return to state Ready waiting for further instructions. There are many other possibilities of errors, e.g. trying to prepare a recipe which is actually a sub-recipe, i.e., not capable of being processed by itself. 
+\end{enumerate}
 
-\lstset{language=,caption=Sourcecode Listing,captionpos=b,
-label=yahoowidgetkon,showstringspaces=false,
-basicstyle={\fontfamily{pcr}\selectfont\footnotesize}}
-\begin{lstlisting}
-<?xml version="1.0" encoding="UTF-8"?>
-<widget>
-	 <debug>off</debug>
-	 <window name="myWindow" title="Hello Widget" visible="true">
-		 <height>120</height>
-		 <width>320</width>
-		 <image src="Resources/orangebg.png">
-			<name>orangebg</name>
-			<hOffset>0</hOffset>
-			<vOffset>0</vOffset>
-		</image>
-		 <text>
-			 <name>myText</name>
-			 <data>Hello Widget</data>
-			 <color>#000000</color>
-			 <size>20</size>
-			 <vOffset>50</vOffset>
-			 <hOffset>120</hOffset>
-		 </text>
-	</window>
-</widget>
-\end{lstlisting}
-
-\newpage
-
-
-\lstset{caption=SIP request and response packet\cite{SIPBook},
-captionpos=b,label=sippacket,showstringspaces=false,
-basicstyle={\fontfamily{pcr}\selectfont\footnotesize}}
-\begin{lstlisting}
-INVITE sip:bob@network.org SIP/2.0
-Via: SIP/2.0/UDP 100.101.102.103:5060;branch=z9hG4bKmp17a
-Max-Forwards: 70
-To: Bob <sip:bob@network.org>
-From: Alice <sip:alice@ims-network.org>;tag=42
-Call-ID: 10@100.101.102.103
-CSeq: 1 INVITE
-Subject: How are you?
-Contact: <sip:xyz@network.org>
-Content-Type: application/sdp
-Content-Length: 159
-v=0
-o=alice 2890844526 2890844526 IN IP4 100.101.102.103
-s=Phone Call
-t=0 0
-c=IN IP4 100.101.102.103
-m=audio 49170 RTP/AVP 0
-a=rtpmap:0 PCMU/8000
-
-SIP/2.0 200 OK
-Via: SIP/2.0/UDP proxy.network.org:5060;branch=z9hG4bK83842.1
-;received=100.101.102.105
-Via: SIP/2.0/UDP 100.101.102.103:5060;branch=z9hG4bKmp17a
-To: Bob <sip:bob@network.org>;tag=314159
-From: Alice <sip:alice@network.org>;tag=42
-Call-ID: 10@100.101.102.103
-CSeq: 1 INVITE
-Contact: <sip:foo@network.org>
-Content-Type: application/sdp
-Content-Length: 159
-v=0
-o=bob 2890844526 2890844526 IN IP4 200.201.202.203
-s=Phone Call
-c=IN IP4 200.201.202.203
-t=0 0
-m=audio 49172 RTP/AVP 0
-a=rtpmap:0 PCMU/8000
-\end{lstlisting}
-
-
-\end{appendix}
+\chapter{OPC UA Vision Method Signatures used in this Thesis}
 
 \endinput

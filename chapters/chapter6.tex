@@ -1,19 +1,4 @@
 \chapter{Fazit und Ausblick\label{cha:chapter6}}
-\paragraph{Fazit:}
-Die Projektziele, ein Konfigurationswerkzeug für die Orbbec Persee Kamera und einen Web-basierten Objekterkennungsservice zu entwickeln, wurden in Teilen erreicht.\newline
-Es wurde ein Konfigurationswerkzeug entwickelt, das auf der Kamera läuft. Es kann über das Netzwerk darauf zugegriffen und ein Bild hochgeladen werden. Außerdem kann man dieses Bild an vorher konfigurierte Cloud Services schicken.\newline
-Weiterhin ist es möglich, mit Hilfe eines Tensorflow Modells ein Bild zu analysieren und Objekte auf dem Bild zu lokalisieren.\newline
-Außerdem besteht die Möglichkeit, auf der Kamera über zwei Skripte jeweils ein 2D oder 3D Bild aufzunehmen.\newline
-Probleme ergaben sich bei der Integration der verschiedenen Funktionalitäten, hauptsächlich begründet durch die zeitraubende Handhabung der Kamera. Im Laufe des Projekts kamen auf der Kamera immer mehr Fehler auf, sodass ein Neuaufsetzen des Betriebssystems unumgänglich wurde. Die Fehler waren u.a. WLAN-Verbindungsabbrüche und fehlschlagende Cross-Compilings für Bibliotheken des ARM Prozessors.\newline
-Das Implementieren des Tensorflow Modells als Web-Service inklusive Schnittstelle wurde zugunsten anderer Arbeitspakete zurückgestellt. 
-
-\paragraph{Ausblick:}
-Für eine weitere Verbesserung des Projekts würden wir folgende Punkte anstreben: 
-\begin{itemize}
-    \item die Bildaufnahmefunktion vollständig in das Programm integrieren 
-    \item die gelieferten Antworten auswerten und automatisch zusammenführen, so würde man dem Nutzer eine sicherere Beurteilung bei der Objekterkennung liefern können.
-    \item das Tensorflowmodel als Webservice vervollständigen um eine Positionierung der Objekte zu liefern.
-\end{itemize}
 
 
 
