@@ -195,110 +195,110 @@ Quantitative parameters could be the size of the service containers, the CPU and
 \label{sec:concecptOverview}
 ODS should be capable of coping with dynamically changing OD algorithms and base protocols. To achieve this, five parameters are relevant: semantic, MT, MT adapter, deployment as and deployment in. Several configurations for each of these parameters are possible. In composition with an ODM, they form a ODS. See \ref{tab:concept} for a graphical representation.\\
 
-\begin{table}[h]
-    \begin{center}
-      \begin{minipage}{\textwidth}
-        \captionof{table}{Morphological box of the design possibilities of an ODS. Parameters are marked bold in the first column. Every parameter has possible configurations. A combination of configurations composes one concept, marked as colored lines.}\label{tab:concept} 
-        \begin{tikzpicture}[
-            very thick,
-            nodes={inner sep=\tabcolsep}
-          ]
-          \matrix[
-              matrix of nodes,
-              inner sep=0pt,
-              row sep=\zeilenabstand
-            ](m){
-              \grafik{\textbf{Semantic}}{}
-                &\grafik{existing standard}{}
-                &\grafik{self designed}{}\\
-              \grafik{\textbf{Interface Architecture}}{}
-                &\grafik{Client/Server}{}
-                &\grafik{Publish/Subscribe}{}\\
-              \grafik{\textbf{Deployment as}}{}
-                &\grafik{Container}{}
-                &\grafik{VM}{}
-                &\grafik{}{}\\
-              \grafik{\textbf{Deployment in}}{}
-                &\grafik{Cloud}{}
-                &\grafik{Edge}{}
-                &\grafik{VS}{}
-                &\grafik{}{}\\
-              &{}&{}&{}&{}\\
-            };
+% \begin{table}[h]
+%     \begin{center}
+%       \begin{minipage}{\textwidth}
+%         \captionof{table}{Morphological box of the design possibilities of an ODS. Parameters are marked bold in the first column. Every parameter has possible configurations. A combination of configurations composes one concept, marked as colored lines.}\label{tab:concept} 
+%         \begin{tikzpicture}[
+%             very thick,
+%             nodes={inner sep=\tabcolsep}
+%           ]
+%           \matrix[
+%               matrix of nodes,
+%               inner sep=0pt,
+%               row sep=\zeilenabstand
+%             ](m){
+%               \grafik{\textbf{Semantic}}{}
+%                 &\grafik{existing standard}{}
+%                 &\grafik{self designed}{}\\
+%               \grafik{\textbf{Interface Architecture}}{}
+%                 &\grafik{Client/Server}{}
+%                 &\grafik{Publish/Subscribe}{}\\
+%               \grafik{\textbf{Deployment as}}{}
+%                 &\grafik{Container}{}
+%                 &\grafik{VM}{}
+%                 &\grafik{}{}\\
+%               \grafik{\textbf{Deployment in}}{}
+%                 &\grafik{Cloud}{}
+%                 &\grafik{Edge}{}
+%                 &\grafik{VS}{}
+%                 &\grafik{}{}\\
+%               &{}&{}&{}&{}\\
+%             };
     
-    % Tabellenlinien
+%     % Tabellenlinien
     
-            \draw[line width=\heavyrulewidth]([yshift={-\aboverulesep-\zeilenabstand}]m.north west)
-                --([yshift={-\aboverulesep-\zeilenabstand}]m.north east)
-              ([yshift={-\aboverulesep-\zeilenabstand}]m.south west)
-                --([yshift={-\aboverulesep-\zeilenabstand}]m.south east);
-    % Verbindungslinien
-            \verbindungslinie{red}{m-1-4}{m-2-3,m-3-4,m-4-3,m-5-2,m-6-2}
-            \verbindungslinie{blue}{m-1-2}{m-2-2,m-4-2,m-5-4,m-6-4}
-            \foreach \f/\p/\t in {red/m-6-2/Non-Industrial,blue/m-6-4/Industrial}
-              \node[\f,below,font=\bfseries]at(\p){\t};
-        \end{tikzpicture}
-      \end{minipage}
-    \end{center}
-\end{table}%
+%             \draw[line width=\heavyrulewidth]([yshift={-\aboverulesep-\zeilenabstand}]m.north west)
+%                 --([yshift={-\aboverulesep-\zeilenabstand}]m.north east)
+%               ([yshift={-\aboverulesep-\zeilenabstand}]m.south west)
+%                 --([yshift={-\aboverulesep-\zeilenabstand}]m.south east);
+%     % Verbindungslinien
+%             \verbindungslinie{red}{m-1-4}{m-2-3,m-3-4,m-4-3,m-5-2,m-6-2}
+%             \verbindungslinie{blue}{m-1-2}{m-2-2,m-4-2,m-5-4,m-6-4}
+%             \foreach \f/\p/\t in {red/m-6-2/Non-Industrial,blue/m-6-4/Industrial}
+%               \node[\f,below,font=\bfseries]at(\p){\t};
+%         \end{tikzpicture}
+%       \end{minipage}
+%     \end{center}
+% \end{table}%
 
 
-\begin{table}[h]
-    \begin{center}
-      \begin{minipage}{\textwidth}
-        \captionof{table}{Morphological box of the implementation possibilities of an ODS. Parameters are marked bold in the first column. Every parameter has possible configurations. A combination of configurations composes one concept, marked as colored lines.}\label{tab:concept} 
-        \begin{tikzpicture}[
-            very thick,
-            nodes={inner sep=\tabcolsep}
-          ]
-          \matrix[
-              matrix of nodes,
-              inner sep=0pt,
-              row sep=\zeilenabstand
-            ](m){
-              \grafik{\textbf{Semantic}}{}
-                &\grafik{OPC UA Vision}{}
-                &\grafik{GCV RPC API}{}
-                &\grafik{ODM}{}
-                &\grafik{self designed}{}\\
-              \grafik{\textbf{Base MT}}{}
-                &\grafik{OPC UA}{}
-                &\grafik{GRPC}{}
-                &\grafik{REST}{}
-                &\grafik{MQTT}{}\\
-               \grafik{\textbf{MT Adapter}}{}
-                &\grafik{OPC UA}{}
-                &\grafik{GRPC}{}
-                &\grafik{REST}{}
-                &\grafik{MQTT}{}\\
-              \grafik{\textbf{Deployment as}}{}
-                &\grafik{Docker}{}
-                &\grafik{Heroku}{}
-                &\grafik{VM}{}
-                &\grafik{}{}\\
-              \grafik{\textbf{Deployment in}}{}
-                &\grafik{Cloud}{}
-                &\grafik{Edge}{}
-                &\grafik{VS}{}
-                &\grafik{}{}\\
-              &{}&{}&{}&{}\\
-            };
+% \begin{table}[h]
+%     \begin{center}
+%       \begin{minipage}{\textwidth}
+%         \captionof{table}{Morphological box of the implementation possibilities of an ODS. Parameters are marked bold in the first column. Every parameter has possible configurations. A combination of configurations composes one concept, marked as colored lines.}\label{tab:concept} 
+%         \begin{tikzpicture}[
+%             very thick,
+%             nodes={inner sep=\tabcolsep}
+%           ]
+%           \matrix[
+%               matrix of nodes,
+%               inner sep=0pt,
+%               row sep=\zeilenabstand
+%             ](m){
+%               \grafik{\textbf{Semantic}}{}
+%                 &\grafik{OPC UA Vision}{}
+%                 &\grafik{GCV RPC API}{}
+%                 &\grafik{ODM}{}
+%                 &\grafik{self designed}{}\\
+%               \grafik{\textbf{Base MT}}{}
+%                 &\grafik{OPC UA}{}
+%                 &\grafik{GRPC}{}
+%                 &\grafik{REST}{}
+%                 &\grafik{MQTT}{}\\
+%               \grafik{\textbf{MT Adapter}}{}
+%                 &\grafik{OPC UA}{}
+%                 &\grafik{GRPC}{}
+%                 &\grafik{REST}{}
+%                 &\grafik{MQTT}{}\\
+%               \grafik{\textbf{Deployment as}}{}
+%                 &\grafik{Docker}{}
+%                 &\grafik{Heroku}{}
+%                 &\grafik{VM}{}
+%                 &\grafik{}{}\\
+%               \grafik{\textbf{Deployment in}}{}
+%                 &\grafik{Cloud}{}
+%                 &\grafik{Edge}{}
+%                 &\grafik{VS}{}
+%                 &\grafik{}{}\\
+%               &{}&{}&{}&{}\\
+%             };
     
-    % Tabellenlinien
+%     % Tabellenlinien
     
-            \draw[line width=\heavyrulewidth]([yshift={-\aboverulesep-\zeilenabstand}]m.north west)
-                --([yshift={-\aboverulesep-\zeilenabstand}]m.north east)
-              ([yshift={-\aboverulesep-\zeilenabstand}]m.south west)
-                --([yshift={-\aboverulesep-\zeilenabstand}]m.south east);
-    % Verbindungslinien
-            \verbindungslinie{red}{m-1-4}{m-2-3,m-3-4,m-4-3,m-5-2,m-6-2}
-            \verbindungslinie{blue}{m-1-2}{m-2-2,m-4-2,m-5-4,m-6-4}
-            \foreach \f/\p/\t in {red/m-6-2/Non-Industrial,blue/m-6-4/Industrial}
-              \node[\f,below,font=\bfseries]at(\p){\t};
-        \end{tikzpicture}
-      \end{minipage}
-    \end{center}
-\end{table}%
+%             \draw[line width=\heavyrulewidth]([yshift={-\aboverulesep-\zeilenabstand}]m.north west)
+%                 --([yshift={-\aboverulesep-\zeilenabstand}]m.north east)
+%               ([yshift={-\aboverulesep-\zeilenabstand}]m.south west)
+%                 --([yshift={-\aboverulesep-\zeilenabstand}]m.south east);
+%     % Verbindungslinien
+%             \verbindungslinie{red}{m-1-4}{m-2-3,m-3-4,m-4-3,m-5-2,m-6-2}
+%             \verbindungslinie{blue}{m-1-2}{m-2-2,m-4-2,m-5-4,m-6-4}
+%             \foreach \f/\p/\t in {red/m-6-2/Non-Industrial,blue/m-6-4/Industrial}
+%               \node[\f,below,font=\bfseries]at(\p){\t};
+%         \end{tikzpicture}
+%       \end{minipage}
+%     \end{center}
+% \end{table}%
 
 
 
