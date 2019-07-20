@@ -1,5 +1,9 @@
 \chapter{Implementation\label{cha:chapter4}}
-A proof of concept implementation of the concept introduced in \ref{cha:chapter3} is documented in this chapter. The code is available here: \ https://github.com/gurukeuck/Master-s-Thesis
+A proof of concept implementation of the concept introduced in \ref{cha:chapter3} is documented in this chapter. The code is available here: https://github.com/gurukeuck/Master-s-Thesis
+
+\section{Sequence Diagrams}
+\section{Class diagram}
+\section{Package diagram}
 
 \section{Virtualization Technology: Docker}
 Realizing a SOA calls for means of decoupling the components and efficient tooling. Docker is the technology which was used here due to following reasons:
@@ -10,23 +14,24 @@ Every docker image can pull the packages and system variables it needs as specif
 \subsection{Orchestration}
  Containers can be scaled if more resources are needed, an extensive monitoring is possible and the network over which the containers communicate can be configured. 
 \subsection{Docker Hub}
- Docker offers (semi)-public or private repositories. They can be used by detector or camera providers to push their docker images and for the recipe management to pull them. As base image there are preconfigured environments available. For this implementation a fully functioning python environment was used as base docker image. To prevent know-how leaking the accessibility to the images on the hub can be restricted. In this implementation a local repository was used with full accessibility to the docker images.
+ Docker offers (semi)-public or private repositories. They can be used by detector or camera providers to push their docker images and for the recipe management to pull them. As base image there are preconfigured environments available. For this implementation a fully functioning python environment was used as base docker image. To prevent know-how leaking of detection methods the accessibility to the images on the hub can be restricted. In this implementation a local repository was used with full accessibility to the docker images.
  \subsection{Calculations on Graphical Processing Unit}
  Some detectors need excessive calculation power. If applicable, the graphical processing unit of the bare metal server the docker engine is running on can be added. It should be kept in mind that with this technique the detector docker image is dependent not only on the docker engine but also the bare metal hardware. Thus, this option should be used with caution and only if needed.
 \subsection{Reason against Docker}
-The reason against using Docker is making all involved parties introduced in \ref{sec:involvedparties} use docker. Camera and detector docker image providers need to add a dockerfile for building the image and pushing it to the repository. On the other side, recipe management must be able to run the docker engine
+The reason against using Docker is making all involved parties introduced in \ref{sec:involvedparties} use docker. Camera and detector docker image providers need to add a dockerfile for building the image and pushing it to the repository. On the recipe management side a docker engine compatible infrastructure has to be provided. 
 
 \section{Inter-Service Communication: gRPC}
-In the current implementation this static. Detectors listen on port 8000, cameras on port 8011. 
+In the current implementation this is static. Detectors listen on port 8000, cameras on port 8011. 
 \section{Programming Language: Python}
-For implenting a proof of concept of the concept created in \ref{cha:chapter3}, a programming language meeting multiple requirements is mandatory. \\
+For implenting a proof of the concept created in \ref{cha:chapter3}, a programming language meeting multiple requirements is mandatory. 
 
 \subsection{Support for Docker}
 
 \subsection{Support for gRPC}
 
+\subsection{Support for OPC UA}
+
 \section{Object Detection Methods used}
-\section{Class diagram}
-\section{Package diagram}
-\section{Sequence Diagram}
+dummy!
+
 \section{Differences to OPC UA Vision Specification}
