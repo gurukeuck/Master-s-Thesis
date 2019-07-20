@@ -1,4 +1,4 @@
-\documentclass[11pt,bibtotoc,liststotoc,BCOR5mm,DIV12,openany,oneside]{book}
+\documentclass[11pt,bibtotoc,liststotoc,DIV12,BCOR8,openany,oneside,a4paper]{book}
 
 % use this declaration to set specific page margins
 %\usepackage[a4paper , lmargin = {2.7cm} , rmargin = {2.9cm} , tmargin = {2.7cm} , bmargin = {4.6cm} ]{geometry}
@@ -13,7 +13,7 @@
 \usepackage{listings, color}	% for source code
 \usepackage{subfig}						% two figures next to each other (example: figure 3a), figure 3b)
 \usepackage{scrpage2}					% header and footer line
-
+\setlength{\headheight}{1.1\baselineskip} 
 
 % header and footer line - no header & footer line on pages where a new chapter starts
 \pagestyle{scrheadings}
@@ -32,6 +32,7 @@
 \input{./misc/hyphenation} 					% use this file to set explicit hyphenations (doesn't seem to work correctly)
 
 %% Useful packages
+\usepackage[BCOR=8.25mm]{typearea}
 \usepackage{geometry}
 \usepackage{diagbox}
 \usepackage{amsmath}
