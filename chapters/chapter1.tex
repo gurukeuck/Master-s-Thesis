@@ -1,7 +1,6 @@
 \chapter{Introduction\label{cha:chapter1}}
 There is a huge variety of different object detection algorithms reaching from feature-based to template-based methods, and more recently also Deep Learning based approaches. Especially the latter have conquered the field very rapidly and have consistently improved the state of the art in many established object detection benchmarks. However, this improvement has not yet arrived at the shop floors of the manufacturing companies. Some of the reasons are directly connected to the method, such as the large amounts of required training data. However, another reason is that the current machine vision infrastructure is not flexible enough to keep track with the dynamic development in the field of object detection. To deploy or even only try out a new method typically requires a certain invest in cost and time that has to be justified very well. This work flow can be greatly accelerated by using Service-Oriented Architectures (SOA).
-\\
-\\
+
 The goal of this thesis is to simplify the process of programming an object detector and integrating it into the manufacturing process. In fact, the great aim is to not program anything at all – instead, a framework shall be proposed that allows to generate an object detection service from a single example image.
 The service should detect the object with a specified method and should automatically have the appropriate interfaces for convenient integration into SOA. The great advantage is that new methods can be tested and deployed without any effort, as we can simply generate and deploy a service which has the same interface as our old one but an updated method.
  

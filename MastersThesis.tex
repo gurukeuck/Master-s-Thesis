@@ -32,7 +32,6 @@
 \input{./misc/hyphenation} 					% use this file to set explicit hyphenations (doesn't seem to work correctly)
 
 %% Useful packages
-\usepackage[BCOR=8.25mm]{typearea}
 \usepackage{geometry}
 \usepackage{diagbox}
 \usepackage{amsmath}
@@ -112,12 +111,12 @@
 % --------------------------------------------------------------
 
 \mainmatter % comment single chapters for faster compilation
-
+\parskip=2ex\relax
     \input{./chapters/chapter1}
     \input{./chapters/chapter2}
     \input{./chapters/chapter3}
-    % \input{./chapters/chapter4}
-    % \input{./chapters/chapter5}
+    \input{./chapters/chapter4}
+    \input{./chapters/chapter5}
     % \input{./chapters/chapter6}
     % \input{./chapters/chapter7}
 
