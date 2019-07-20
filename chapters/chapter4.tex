@@ -2,8 +2,56 @@
 A proof of concept implementation of the concept introduced in \ref{cha:chapter3} is documented in this chapter. The code is available here: https://github.com/gurukeuck/Master-s-Thesis
 
 \section{Sequence Diagrams}
+\begin{figure}[ht]
+	\centering
+  \includegraphics[width=\textwidth]{img/SequenceDiagram-GetConfig.pdf}
+	\caption{Sequence Diagram - GetConfig}
+	\label{fig:SequenceDiagram-GetConfig}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+  \includegraphics[width=\textwidth]{img/SequenceDiagram-Train.pdf}
+	\caption{Sequence Diagram - Train}
+	\label{fig:SequenceDiagram-Train}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+  \includegraphics[height=0.6\textheight]{img/SequenceDiagram-GenRecipe.pdf}
+	\caption{Sequence Diagram - GenRecipe}
+	\label{fig:SequenceDiagram-GenRecipe}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+  \includegraphics[width=\textwidth]{img/SequenceDiagram-Transfer.pdf}
+	\caption{Sequence Diagram - Transfer}
+	\label{fig:SequenceDiagram-Transfer}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+  \includegraphics[width=\textwidth]{img/SequenceDiagram-Test.pdf}
+	\caption{Sequence Diagram - Test}
+	\label{fig:SequenceDiagram-Test}
+\end{figure}
+
 \section{Class diagram}
+\begin{figure}[ht]
+	\centering
+  \includegraphics[width=\textwidth]{img/classes.pdf}
+	\caption{Class diagram}
+	\label{fig:Classes}
+\end{figure}
+
 \section{Package diagram}
+\begin{figure}[ht]
+	\centering
+  \includegraphics[width=\textwidth]{img/packages.pdf}
+	\caption{Package diagram}
+	\label{fig:Packages}
+\end{figure}
 
 \section{Virtualization Technology: Docker}
 Realizing a SOA calls for means of decoupling the components and efficient tooling. Docker is the technology which was used here due to following reasons:
@@ -22,10 +70,12 @@ The reason against using Docker is making all involved parties introduced in \re
 
 \section{Inter-Service Communication: gRPC}
 In the current implementation this is static. Detectors listen on port 8000, cameras on port 8011. 
+
 \section{Programming Language: Python}
 For implenting a proof of the concept created in \ref{cha:chapter3}, a programming language meeting multiple requirements is mandatory. 
 
 \subsection{Support for Docker}
+
 
 \subsection{Support for gRPC}
 
