@@ -35,14 +35,14 @@ This optional method can be used to gather the current configuration of the dete
     \>  run(\\
     \>  \>  (out)	 \> 	ContainerObject           \> container); 
     \end{tabbing}
-    The ContainerObject provides methods and attributes to call. See \cite{LastvisitedMay4th2019DockerPython} for a detailed reference.
+    The ContainerObject will be returned by the method call explained in point 4.
     \item This method is invoked by the run method in point 4 and needs no calling.
-    \item \begin{tabbing}
+    \item See \cite{LastvisitedMay4th2019DockerPython} for a detailed reference. \begin{tabbing}
     space \= space \= spacespacespace \= spacespacespacespace \= spacespacespace \kill
     \>  run(\\
     \>  \>  (in)	 \> 	String          \> imageName\\
     \>  \>  (in)	 \> 	boolean          \> detach\\
-    \>  \>  (in)	 \> 	RecipeIdType    \> RecipeId\\
+    \>  \>  (in)	 \> 	boolean    \> autoremove\\
     \>  \>  (in)	 \> 	ProductIdType   \> ProductId\\
     \>  \>  (out)	 \> 	String          \> JobId\\
     \>  \>  (out)	 \> 	Int32           \> Error); 
