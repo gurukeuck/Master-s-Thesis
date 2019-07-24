@@ -1,1 +1,276 @@
-\chapter{Ergebnisse\label{cha:chapter5}}
+\chapter{Implementation\label{cha:chapter5}}
+A proof of concept implementation of the concept introduced in chapter \ref{cha:chapter4} is documented in this chapter. The code is available here: \url{https://github.com/gurukeuck/Master-s-Thesis}
+
+\section{Requirements}
+To run this framework, you need to meet these requirements:
+\begin{itemize}
+    \item Docker
+    \item Python 3+ plus following packages:
+    \begin{itemize}
+        \item docker
+        \item grpcio
+        \item protobuf
+        \item googleapis-common-protos
+        \item opcua
+    \end{itemize}
+\end{itemize}
+
+\section{Sequence Diagrams and Method Signatures}
+The subsections are named like the methods you call during usage. They illustrate the process of a CAD file or camera image to determining the pose of an object inside that file or image. Requirement is having a ready to use detector and camera Docker image loaded in Docker hub and a CAD file. 
+
+In this section, dotted arrows denote gRPC connections.
+
+\subsection{GetConfig}
+This optional method can be used to gather the current configuration of the detector or camera docker image:
+
+\begin{enumerate}
+    \item \begin{tabbing}
+            space \= space \= spacespacespace \= spacespacespacespace \= spacespacespace \kill
+            \>  GetConfig(\\
+            \>  \>  (out)	 \> 	String           \> Config); 
+        \end{tabbing}
+        GetConfig is called by the recipe generator client which could be a machine operator, a PLC or production planner.
+    \item To run this method it is necessary to instantiate an instance of the DockerApi class which connects to a Docker registry provided by environment variables. You need to provide an imageName when instantiating. Running the run method does not require any input: \begin{tabbing}
+    space \= space \= spacespacespace \= spacespacespacespace \= spacespacespace \kill
+    \>  run(\\
+    \>  \>  (out)	 \> 	ContainerObject           \> container); 
+    \end{tabbing}
+    The ContainerObject provides methods and attributes to call. See \cite{LastvisitedMay4th2019DockerPython} for a detailed reference.
+    \item This method is invoked by the run method in point 4 and needs no calling.
+    \item \begin{tabbing}
+    space \= space \= spacespacespace \= spacespacespacespace \= spacespacespace \kill
+    \>  run(\\
+    \>  \>  (in)	 \> 	String          \> imageName\\
+    \>  \>  (in)	 \> 	boolean          \> detach\\
+    \>  \>  (in)	 \> 	RecipeIdType    \> RecipeId\\
+    \>  \>  (in)	 \> 	ProductIdType   \> ProductId\\
+    \>  \>  (out)	 \> 	String          \> JobId\\
+    \>  \>  (out)	 \> 	Int32           \> Error); 
+    \end{tabbing}
+\end{enumerate}
+
+\begin{tabbing}
+    space \= space \= spacespacespace \= spacespacespacespace \= spacespacespace \kill
+    \>  StartSingleJob(\\
+    \>  \>  (in)	 \> 	String          \> MeasId\\
+    \>  \>  (in)	 \> 	String          \> PartId\\
+    \>  \>  (in)	 \> 	RecipeIdType    \> RecipeId\\
+    \>  \>  (in)	 \> 	ProductIdType   \> ProductId\\
+    \>  \>  (out)	 \> 	String          \> JobId\\
+    \>  \>  (out)	 \> 	Int32           \> Error); 
+\end{tabbing}
+
+
+
+
+\begin{figure}[ht]
+	\centering
+  \includegraphics[width=\textwidth]{img/SequenceDiagram-GetConfig.pdf}
+	\caption{Sequence Diagram - GetConfig}
+	\label{fig:SequenceDiagram-GetConfig}
+\end{figure}
+
+\subsection{Train}
+\begin{figure}[ht]
+	\centering
+  \includegraphics[width=\textwidth]{img/SequenceDiagram-Train.pdf}
+	\caption{Sequence Diagram - Train}
+	\label{fig:SequenceDiagram-Train}
+\end{figure}
+
+\subsection{GenRecipe}
+\begin{figure}[ht]
+	\centering
+  \includegraphics[height=0.6\textheight]{img/SequenceDiagram-GenRecipe.pdf}
+	\caption{Sequence Diagram - GenRecipe}
+	\label{fig:SequenceDiagram-GenRecipe}
+\end{figure}
+
+\subsection{Transfer}
+In the demo implementation, the recipe storage of the recipe generator and the OPC UA Vision server are the same (see \ref{fig:SequenceDiagram-Transfer}). A recipe is a pair of docker image names, the list being decorated with an ExternalId. 
+\begin{figure}[ht]
+	\centering
+  \includegraphics[width=0.7\textwidth]{img/SequenceDiagram-Transfer.pdf}
+	\caption{Sequence Diagram - Transfer}
+	\label{fig:SequenceDiagram-Transfer}
+\end{figure}
+
+\subsection{Train}
+\begin{figure}[ht]
+	\centering
+  \includegraphics[width=0.7\textwidth]{img/SequenceDiagram-Test.pdf}
+	\caption{Sequence Diagram - Test}
+	\label{fig:SequenceDiagram-Test}
+\end{figure}
+
+\section{Class diagram}
+\begin{figure}[ht]
+	\centering
+  \includegraphics[width=0.9\textwidth]{img/classes.pdf}
+	\caption{Class diagram}
+	\label{fig:Classes}
+\end{figure}
+
+\section{Package diagram}
+\begin{figure}[ht]
+	\centering
+  \includegraphics[width=\textwidth]{img/packages.pdf}
+	\caption{Package diagram}
+	\label{fig:Packages}
+\end{figure}
+
+\section{Virtualization Technology: Docker}
+\subsection{Pro}
+Realizing a SOA calls for means of decoupling the components and efficient tooling. Docker is the technology which was used here due to following reasons:
+\subsubsection{Dependencies of components are handled smoothly} 
+Every docker image can pull the packages and system variables it needs as specified in the dockerfile. E.g. one detector may depend on openCV 2.7.1 while another detector depends on 1.8. Both docker images that are built using their respective dockerfile are independent of each other. If no virtualization technology would be used here, a dependency handling for the whole recipe management would be necessary. In the case of two openCV versions just a slight modification of the framework may be necessary. A more drastic example would be detectors that rely on different .NET frameworks which might not be able to coexist on a system.
+\subsubsection{Platform Independency}
+ A platform in this context means operating system, e.g. Windows or Linux. The independency is twofold. Firstly, the docker engine runs on Linux (CentOS, Debian, Fedora, Oracle Linux, RHEL, SUSE and Ubuntu) and Windows Server. In an industrial context, both platforms are present and should be supported for maximum flexibility.
+\subsubsection{Orchestration}
+ Containers can be scaled if more resources are needed, monitoring and load balancing is possible and the network over which the containers communicate can be configured. See e.g. Mandy Waite's contribution to DevFest Ukraine in 2015 for more information. \cite{Waite2015ScalableContainers}
+\subsubsection{Docker Hub}
+ Docker offers (semi)-public or private repositories. They can be used by detector or camera providers to push their docker images and for the recipe management to pull them. As base image there are preconfigured environments available. For this implementation a fully functioning python environment was used as base docker image. To prevent know-how leaking of detection methods the accessibility to the images on the hub can be restricted. In this implementation a local repository was used with full accessibility to the docker images.
+ \subsubsection{Calculations on Graphical Processing Unit}
+ Some detectors need excessive calculation power. If applicable, the graphical processing unit of the bare metal server the docker engine is running on can be added. It should be kept in mind that with this technique the detector docker image is dependent not only on the docker engine but also the bare metal hardware. Thus, this option should be used with caution and only if needed.
+\subsection{Contra}
+\subsubsection{Lock In}
+The reason against using Docker is making all involved parties introduced in \ref{sec:involvedparties} use docker. Camera and detector docker image providers need to add a dockerfile for building the image and pushing it to the repository. On the recipe management side a docker engine compatible infrastructure has to be provided. 
+
+\section{Detector and Camera Communication: gRPC}
+\subsection{Pro}
+To implement the methods defined in \ref{detectormethods} gRPC was used due to following reasons: 
+\subsubsection{Simple Service Definition}
+In proto files you can find the service RPCs and input / output types defined. With protoc, the protocol buffer compiler, it is possible to generate place holder for clients and servers, called stubs. These place holders are the base for every camera or detector docker image provider. For a complete overview of the created proto files see \ref{proto}. 
+\subsubsection{Multilingual}
+Idiomatic stubs, i.e. client and server placeholders can be generated in 12 languages.\cite{LastvisitedMay4th20192019GRPCDocumentation} This is a great advantage for every provider - since no wrappers or complete rewriting of code in a possibly unknown language has to be done.
+\subsubsection{Backwards Compatibility}
+According to Sam Newman it is crucial to be able to deploy new servers without having to deploy clients at the time or otherwise dependently. (\cite{Newman2015BuildingMicroservices}, page 79) This is easily done with gRPC and proto3 syntax - as long as no fields are deleted or the numbers change, older clients will still be able to work with new servers.
+\subsubsection{REST Gateway}
+gRPC's ecosystem offers a protobuf / JSON gateway. \cite{2018-11-242017Grpc-gateway} With annotations in the proto file mappings can be set. Example from official documentation is provided here for a better understanding. Without annotations:
+
+\begin{lstlisting}[language=protobuf3,style=protobuf]
+syntax = "proto3";
+package example;
+message StringMessage {
+  string value = 1;
+}
+
+service YourService {
+  rpc Echo(StringMessage) returns (StringMessage) {}
+}
+\end{lstlisting}
+
+With annotations:
+
+\begin{lstlisting}[language=protobuf3,style=protobuf]
+ syntax = "proto3";
+ package example;
++
++import "google/api/annotations.proto";
++
+ message StringMessage {
+   string value = 1;
+ }
+
+ service YourService {
+-  rpc Echo(StringMessage) returns (StringMessage) {}
++  rpc Echo(StringMessage) returns (StringMessage) {
++    option (google.api.http) = {
++      post: "/v1/example/echo"
++      body: "*"
++    };
++  }
+ }
+\end{lstlisting}
+
+In the current implementation this is not done. Note that as of today, it is not supported to send files via the gateway, so a conversion of bytes to string has to be done. 
+\subsubsection{Streaming}
+gRPC supports HTTP/2. Especially for large files this is an advantage because multiplexed, bi-directional streams are supported. This allows for high performant file transfer. In this implemention, a byte stream was used for the Train method of the detector. See \ref{proto} for the proto file and \ref{sec:grpcpython} for an example python implementation.
+
+\subsection{Contra}
+\subsubsection{Lock In}
+As well as for Docker as virtualization technology gRPC might mean extra work for detector and camera providers. Although stubs can be provided, developers still need to adhere to the service definition in the proto file.
+\subsubsection{Networks will fail}
+According to Sam Newman networks can never be trusted. (\cite{Newman2015BuildingMicroservices}, page 76) So, appropriate fail mechanisms have to be provided. For example, a buffering of messages is possible in case of a corrupt gRPC channel. This is not implemented in the demo framework yet.
+
+\subsection{Stub Ports}
+In the current implementation the ports on which the detector and camera server listen is static. Detectors listen on port 8000, cameras on port 8011. 
+
+\section{Programming Language: Python}
+For implenting a proof of the concept created in \ref{cha:chapter3}, a programming language supporting the components Docker, gRPC and OPC UA is highly beneficial. Python not only fulfills all three requirements, but it is also the one of the author's highest expertise.
+
+\subsection{Support for Docker}
+There is a Docker SDK available: A Python library for the Docker Engine API. It lets you do anything the docker command does, but from within Python apps – run containers, manage containers, manage Swarms, etc. \cite{LastvisitedMay4th2019DockerPython}
+\begin{minted}{python}
+import docker
+
+client = docker.from_env()
+
+# You can now run containers:
+client.containers.run("ubuntu", "echo hello world")
+\end{minted}
+
+\subsection{Support for gRPC}
+\label{sec:grpcpython}
+Python is one of the supported languages as it is binded to gRPC's C core.  \cite{LastvisitedMay4th20192019GRPCDocumentation} Hence it is easy for the recipe generator to import necessary gRPC stubs. The gRPC client can then establish the channel. We can now call the server as shown here with the Train method:
+
+\begin{minted}[breaklines]{python}
+# detector/detector_client.py
+
+import grpc
+# import stubs containing classes and methods generated from proto file
+import detector_pb2
+import detector_pb2_grpc
+
+
+class DetectorClient:
+    def __init__(self):
+        # establish a channel based on a TCP http/2 connection
+        channel = grpc.insecure_channel("localhost:8000")
+        # stub can be used to invoke gRPC methods
+        self.stub = detector_pb2_grpc.DetectorStub(channel)
+    
+    def Train(self, cadFile, **kwargs):
+        config = kwargs.setdefault("config", io.StringIO("dummy config"))
+        # generate an iterable object of the cadFile and config
+        # types have to be the same as message types in the proto file
+        requestiterator = self.get_file_chunks(cadFile, config)
+        # call Train method and print result
+        response = self.stub.Train(requestiterator)
+        print("Detector client received Train result: {0} \nAnd image: {1}".format(response.Result, response.Image))
+        
+# ...
+\end{minted}
+
+\subsection{Support for OPC UA}
+There is an open source Python SDK for OPC UA. \cite{LastvisitedMay4th2019OPCPython} Hence it is easy for the recipe generator to import necessary OPC UA client, whilst the OPC UA client can easily connect to a server:
+\begin{minted}{python}
+# opcua/opcua_client.py
+
+from opcua import Client
+from opcua import ua
+
+run():
+    # populate adress space, invoke methods...
+
+if __name__ == "__main__":
+    # ...
+    client = Client("opc.tcp://localhost:4840/freeopcua/server/")
+    run()
+\end{minted}
+
+In the given example, the \_\_main\_\_ method is illustrated, this is of course only executed if the script is run directly and not via an import.
+
+\section{Object Detection Methods used}
+As for the demo framework implementation, only dummy detection methods were used. However, the transfer of camera images has been tested successfully.
+
+\section{Differences to OPC UA Vision Specification}
+There are major simplifications made of the OPC UA Vision specification. This is mostly due to the fact that there was no XML nodeset released by the time of implementation. The nodeset would have enabled me to import the entire information model to an OPC UA server. The following sections describe the necessary simplifications in more detail.
+
+\subsection{Recipe Transfer}
+Since the OPC UA Vision server and the recipe generator share their recipe storage and docker registry, it is sufficient to transfer the ExternalId with no additional content required. This might not be the case in a productive environment, where the topology does not allow sharing the same storage and registry. If they share at least the docker registry, then it is possible to reprogram the ExternalId to a string of concatenated docker image names, e.g. detector:latest-camera:latest. If they share none of the two, then additional image content transfer via OPC UA has to be done or the OPC UA Vision server docker registry needs to be managed externally.
+
+\subsection{State Machine and asynchronous Methods}
+According to the OPC UA Vision specification, StartSingleJob is an asynchronous method which triggers recipe execution and the state machine to transit from Ready to SingleExecution (see \ref{fig:OPCStateMachineAutomatic} and \ref{fig:runtimeviewexec}). The entire state machine of the OPC UA Vision server was neglected due to time restrictions of the thesis. As a workaround, all methods were implemented synchronously. In consequence the event containing the detection result is not sent but instead the pose is directly returned by StartSingleJob.
+
+

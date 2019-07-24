@@ -1,8 +1,7 @@
 \appendix
 
 \chapter{Example for a recipe life cycle}
-To illustrate the above remarks on recipe management, here is a possible life cycle of a recipe: Note that the 
-method signatures are not necessarily exact here. 
+To illustrate recipe management, here is a possible life cycle of a recipe taken from the OPC UA Vision specification. \cite{VDMA2018OPCSpecification} Note that the method signatures are not necessarily exact here. 
 \begin{enumerate}
     \item A recipe for ProductId-m is created externally (often centrally). 
     \item The recipe is pushed to the vision system with ExternalId-1, ProductId-m (using AddRecipe())
@@ -42,5 +41,13 @@ method signatures are not necessarily exact here.
 \end{enumerate}
 
 \chapter{OPC UA Vision Method Signatures used in this Thesis}
+
+\chapter{Proto Files}
+\label{proto}
+\section{Detector}
+\lstinputlisting[language=protobuf3,style=protobuf]{img/detector.proto}
+
+\section{Camera}
+\lstinputlisting[language=protobuf3,style=protobuf]{img/camera.proto}
 
 \endinput

@@ -1,83 +1,76 @@
-\chapter{Industrial ODS Concept\label{cha:chapter3}}
+\chapter{Object Detection SOA Design Possibilities\label{cha:chapter3}}
+\label{sec:concecptOverview}
+ODS should be capable of coping with dynamically changing OD algorithms and base protocols. To achieve this, five parameters are relevant: semantic, MT, MT adapter, deployment as and deployment in. Several configurations for each of these parameters are possible. In composition with an ODM, they form a ODS. See \ref{tab:concept} for a graphical representation.
 
-In this concept the ODS is a recipe for an OPC Vision server. See fig. \ref{fig:concept} for an overview. 
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{img/Concept.pdf}
-    \caption[Concept]{Illustration of the industrial ODS concept. Ellipses denote inputs, solid rectangles systems, dotted rectangles scopes of systems and notes the content of a file. The OPC UA Vision server for cameras is not yet released by the OPC foundation, hence marked grey.}
-    \label{fig:concept}
-\end{figure}
+\begin{table}[h]
+    \begin{center}
+      \begin{minipage}{\textwidth}
+        \captionof{table}{Morphological box of the design possibilities of an ODS. Parameters are marked bold in the first column. Every parameter has possible configurations. A combination of configurations composes one concept, marked as colored lines.}\label{tab:concept} 
+        \begin{tikzpicture}[
+            very thick,
+            nodes={inner sep=\tabcolsep}
+          ]
+          \matrix[
+              matrix of nodes,
+              inner sep=0pt,
+              row sep=\zeilenabstand
+            ](m){
+              \grafik{\textbf{Interface Semantic}}{img/white.png}
+                &\grafik{existing standard}{img/white.png}
+                &\grafik{self designed}{img/white.png}\\
+              \grafik{\textbf{Communication Pattern}}{img/white.png}
+                &\grafik{Client/Server}{img/white.png}
+                &\grafik{Publish/Subscribe}{img/white.png}\\
+              \grafik{\textbf{Deployment as}}{img/white.png}
+                &\grafik{Container}{img/white.png}
+                &\grafik{VM}{img/white.png}
+                &\grafik{}{img/white.png}\\
+              \grafik{\textbf{Deployment in}}{img/white.png}
+                &\grafik{Cloud}{img/white.png}
+                &\grafik{Edge}{img/white.png}
+                &\grafik{VS}{img/white.png}\\
+              \grafik{\textbf{...}}{img/white.png}
+                &\grafik{}{img/white.png}
+                &\grafik{}{img/white.png}
+                &\grafik{}{img/white.png}\\
+              &{}&{}&{}&{}\\
+            };
+    % Kopfzeile
+        \node(ul)[anchor=south west] 
+          at ([yshift={\zeilenabstand+\aboverulesep+\belowrulesep}]m.north west)
+          {Parameter};
+        \node(or)[anchor=south east] at (ul.north-|m-1-1.east){Choice
+        };
+    
+    % Tabellenlinien
+        \draw[line width=\lightrulewidth](or.north-|ul.west)--(or.east|-ul.south)
+          ([yshift=-\aboverulesep]ul.south-|m.west)
+            --([yshift=-\aboverulesep]ul.south-|m.east);
+        \draw[line width=\heavyrulewidth]([yshift=\belowrulesep]or.north-|m.west)
+            --([yshift=\belowrulesep]or.north-|m.east)
+          ([yshift={-\aboverulesep-\zeilenabstand}]m.south west)
+            --([yshift={-\aboverulesep-\zeilenabstand}]m.south east);
 
-The ODS is a trained detector container which is generated with a CAD model and an untrained detector as input. The detector must provide two methods:
-\begin{tabbing}
-\label{detectormethods}
-    space \= space \= spacespacespace \= spacespacespacespace \= spacespacespace \kill
-    \>  Train(\\
-    \>  \>  (in)	 \> 	CADType          \> CADModel); \\
-    \>  Test(\\
-    \>  \>  (in)	 \> 	ImageType     \> Image\\
-    \>  \>  (out)	 \> 	PoseType           \> Pose); 
-\end{tabbing}
-
-Train is a training routine which generates several views or templates from a CAD model. It must be preconfigured by the detector provider e.g. learning rates of neural networks have to be preset. After training the detector container includes generated templates or views and is callable with the Test method.  Test requires an image for processing the pose of an object aided by the generated templates.  Input and output types are not specified in this thesis. The container is illustrated as a Docker image, this is not mandatory however.
-
-The detector container is added to recipe management of the VS via OPC UA Vision server. Recipes are scripts which handle image acquisition- and detection container calling and OPC UA Vision server interaction. Scripts can be added by the recipe generator or another entity. Image acquisition is currently set to be handled between image acquisition containers and cameras directly. This might change in the near future. During a phone interview conducted on 30th of April 2019, VDMA member Dr. Reinhard Heister stated that part 2 of the OPC Vision specification will direct the component layer. A component can be a camera that offers an OPC Vision server itself. For this task, OPC foundation and EMVA, supervisor of the GenICam interface \cite{LastvisitedMay4th20192019GenICamStandard} for cameras, will join forces. Hence in a few years time it will be possible to have the VS to be interoperable with any camera supporting OPC Vision and the images can be acquired via the OPC servers.
+            \verbindungslinie{red}{m-1-3}{m-2-3,m-3-3,m-4-4,m-6-4}
+            \verbindungslinie{blue}{m-1-2}{m-2-2,m-3-2,m-4-2,m-6-2}
+            \foreach \f/\p/\t in {red/m-6-4/Variant 2,blue/m-6-2/Variant 1}
+              \node[\f,below,font=\bfseries]at(\p){\t};
+        \end{tikzpicture}
+      \end{minipage}
+    \end{center}
+\end{table}%
 
 
-\section{Sequence Diagram}
-Figs. \ref{fig:runtimeviewgen} and \ref{fig:runtimeviewexec} show an example sequence diagram of the service generation, transfer and execution. The approach is as follows:
-\begin{figure}
-    \centering
-    \includegraphics[height=0.9\textheight]{img/ConceptRuntimeView-RecipeGenerationAndTransfer.pdf}
-    \caption[Sequence diagram recipe generation and method based transfer]{Sequence diagram of recipe generation and method based transfer to OPC UA Vision server. Pink arrows denote methods which are not covered by OPC Vision specification. Not all parameters of method signatures are shown.}
-    \label{fig:runtimeviewgen}
-\end{figure}
+Semantic defines the interface of the service. It handles the payload of the communication between server and client. That is depending on messaging technology, service definition of methods, return types and resources. OPC UA Vision \cite{VDMA2018OPCSpecification} and GCV RPC API \cite{Lastvisited2018-11-272018CloudGRPC} are two publicly available standards for ODS. In general, resorting to public standards is a good habit due to the already existing user base, detailed documentation, constant development and thorough testing. In contrast to that one could design the semantic for a service interface on his own with the advantage of freedom over all design decisions. However, this would mean a constant update of design work when adapting to new protocols or ODM, which is tedious and does not outweigh the advantages of public standards. When comparing OPC UA Vision and GCV RPC API one can see that the former is meant to be an abstract standard for all kinds of vision systems, the latter is tailored for the GCV service. Through abstraction the former is more durable than the latter. Also, OPC UA Vision is maintained by the OPC foundation and thus focuses on industrial applications. Another way of defining the service would be copying the method signatures and return types of the ODM. This would mean a changing interface towards the client with every new ODM, which is not eligible in the context of the fast-changing world of underlying ODM of the service. Instead, the semantic translation between ODM and service methods should be hidden. 
 
-\begin{figure}
-    \centering
-    \includegraphics[height=0.9\textheight]{pre}
-    \caption[Sequence diagram of recipe execution]{Sequence diagram of recipe execution of method based OPC UA Vision server. Pink arrows denote the recipe which is not covered by OPC Vision specification. Not all parameters of method signatures are shown.}
-    \label{fig:runtimeviewexec}
-\end{figure}
+MT defines how data is transported between entities. This includes base protocols, security designs, encoding and data transfer insurance. Note that since February 6, 2018 OPC UA offers the possibility to send its data via MQTT as specified in part 14 of the OPC UA specification, so you could "include" MQTT into OPC UA. However, MQTT can be used as a standalone MT, offering less features especially concerning information modeling, but with the advantage of creating less overhead. Also, the OPC UA can utilize HTTPS for transport, however not in a RESTful manner. \cite{Ronnholm2018IntegrationTranslator} This is due to a lacking adressing scheme. RESTful HTTP is centered around abstract resources that can be identified by a URL. Any body of data may therefore be manipulated independently of any intermediary application logic. This is not the case with HTTP in OPC UA. In addition, HTTP is deeply embedded into the communication stack and can therefore not be understood by an unrelated third party. Ronnholm introduces a possible adapter in his thesis. \cite{Ronnholm2018IntegrationTranslator}
 
-\begin{itemize}
-    \item Generation and Transfer
-    \begin{itemize}
-        \item TrainDetector trains the detector with the Train method using a CAD model as input. The detector service changes state from untrained to trained and can be called via Test method.
-        \item GenerateRecipe puts image acquisition and detector into sequence. Hence, when triggered an image is grabbed, passed to the Test method of the detector, which output the pose of the object in the image.
-        \item Transfer initiates detector, image acquisition or recipe transfer. The object to be transferred is identified with the ExternalId.
-        \item AddRecipe creates a new recipe opject and maps an InternalId to the ExternalId. ExternalId is an OPC UA datatype identifying a recipe in the view of the environment, InternalId is an OPC UA data type identifying an instance of the recipe on the VS.  InternalId is necessary because recipes can not only be handled via the server but also locally on the VS. For the OPC UA client, only the ExternalId should be callable and internal ambiguities must be handled by the VS. The created recipe object can contain meta data of the recipe and a reference to the recipe itself. As of now, it contains no data.
-    	\item GenerateFileForWrite creates a new temporary file object. The GenerateOptions parameter contains the ExternalId of the process. The method returns a FileNodeId and a FileHandle. The temporary file object offers Write and CloseAndCommit methods to transfer binary recipe data. The recipe itself is treated as a file and is referenced in the recipe object.
-    \end{itemize}
-    \item Execution
-    \begin{itemize}
-    	\item PrepareRecipe is used to prepare a recipe so that it can be used for starting a job on the vision system. There are several ways the vision system can cope with recipes and their preparation. For example, the vision system can have several recipes prepared for immediate execution or just a single one. PrepareRecipe triggers transition from state Initialized to state Ready of the VS state machine. If the client tries to prepare a detector oder image acquisition container it should return an error.
-    	\item StartSingleJob method triggers transition from state Ready to state SingleExecution. Parameter RecipeId is the ExternalId of the recipe script. The method returns a JobId which has to be used to query any information about the Job later.
-    	\item AcqImage triggers a camera to acquire an image. In case several cameras are addressable, the method can be overloaded with a CameraId.
-    	\item Test calls the detection routine of the detector service and returns the pose an object.
-    	\item Once the Train method is complete the OPC server triggers an event to the OPC client containing the JobId and ResultId. It also provides information on whether the result is partial, the job is done and when the result was created.
-    	\item GetResultById is used by the client to query the template matching result via RecipeId and a timeout which aborts the transfer after a given time. It returns meta data about the result and the possible reference to result data containing e.g. the base image. In this case, the detected point can be stored in the result object itself.
-    \end{itemize}
-\end{itemize}
+The environment (e.g. industrial or home automation) of the service has an effect on the MT. Especially for industrial environments a connection to OT is highly beneficial for real time applications. 
 
-\section{Deployment}
-\subsection{Vision System}
-In a typical industrial environment, the VS is a production line or a single machine. According to the OPC Vision specification the application can range from simple light barriers to complex pose detection. The recipes presented here are rather designed for the latter purpose, however can be used for the former, too. On the software side, the VS has to cover recipe, configuration and result management. Depending on the size of the system (number of cameras, data storage, CPU cores...) it can be deployed on a single industrial PC or in a larger factory cloud. The detection and image acquisition services in this work are containerized microservices, so the underlying hardware must support the containerization engine. According to an interview with VDMA experts \cite{Lastvisited26-04-20192015OPCVision} more and more machine vision functionalities shall be transferred to PLCs. This might call for a different approach of deployment for the recipes in a later stage. The OPC client triggering the job / recipe execution is usually a PLC.
+For convenience, one or more adapter can be offered towards the client or other ODS. 
 
-\subsection{Recipe Generator}
-As for the recipe generator, there are more possibilities. Since detectors could be added by several vendors in a hub, it would make sense to make this available in a (virtual private) cloud. The recipe generation might also require excessive computing power, which can be provided by cloud platforms. Furthermore, mobile networks such as the 5G technology offer a bandwidth up to 10.000\,MBit/s and a latency under 1\,ms, so costs on the infrastructure side can be minimized. Possible drawback is the increased security need of data storage and transmission.
+Deployment as Heroku container is possible, although dependent on the Heroku platform thus dependent on cloud deployment. For some use cases, especially those that require low latency, an edge deployment is more applicable. 
 
-The generator might also be deployed as part of the vision system. The advantages of this concept are better data protection possibilities and lower latency. The drawback in this case is the lower computing power and tougher access for ODS vendors.
+There are many more implementation possibilities such as database integration, orchestration vs. choreography, continuous deployment and so forth. These aspects are not remarked in the concept phase of thesis as they are considered implementation specific.
 
-\section{Interfaces}
-\subsection{Detector Containers}
-The detector containers are called during the execution of a recipe. The services might also be called in sequence. For this communication a standardized interface is of great help. As for the semantic, the two methods Train and Test are defined. For data transport RPC is a good choice due to its high performing request calls. With the Train and Test methods defined, most of the application logic can reside inside the server (detector container), hence changes of ODM do not cause changes for the client (recipe). The connection between recipe, OPC UA Vision server and cameras is implementation specific.
-
-\subsection{Recipe Generator}
-The recipe generator needs an interface for the OPC UA Vision server on the one hand and on the other hand for the recipe generator client. In case the generator is deployed in an industrial environment it would be reasonable to configure not only the recipe transfer but also the recipe generation via OPC UA to maintain a great interoperability within the shopfloor. For instance, CAD models can be created by cameras and automatically sent to the recipe generator. In case it is deployed in a web environment, an interface rather developed for web technologies is advantageous. For instance RPC with a RESTful adapter could be used for that purpose.
-
-\subsection{Image Acquisition}
-As of now, the image acquisition containers do not have a standardized interface. This is due to the plans of the OPC foundation of fulfilling this task in the near future.
-
-\section{Orchestration of Recipe Management}
-The recipe, image acquisition- and  detector containers combine to recipe management of the OPC UA Vision server. As recipes handle image acquisition and detector container calling, one could say it serves as an orchestrator and is a single point of failure. A possible hazard would be applying too much application logic to the recipe, thus it should stay simple and only run necessary OD steps by calling the containers in sequence with a standardized interface. This maximizes cohesion of the components. In case putting several trained detector containers in sequence, the output of the Test method would have to be abstracted since the second and following containers would receive a pose of an object as input which is unlikely useful. Abstracting output types would again shift application logic to the recipe which should be minimized. Hence, sequencing OD containers should be scoped in a container which handles the sequencing internally and is externally callable via Train \& Test methods.
+The following section introduce a possible concept for an ODS in an industrial environment.

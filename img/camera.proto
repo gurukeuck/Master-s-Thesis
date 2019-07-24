@@ -1,0 +1,24 @@
+syntax = "proto3";
+//Build command for gRPC python stubs goes something like: 
+//py -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. .\camera.proto
+
+// The camera service definition
+service Camera {
+  // takes an image with an optional camera config
+  rpc GrabImage (CamConfig) returns (CamImage) {
+  }
+  // returns the camera configuration file
+  rpc GetConfig (Empty_) returns (CamConfig){
+  }
+}
+
+
+message CamImage {
+  bytes Content = 1;
+}
+
+message CamConfig {
+  string Config = 1;
+}
+
+message Empty_ {}

@@ -1,0 +1,69 @@
+syntax = "proto3";
+//Build command for gRPC python stubs goes something like: 
+//py -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. .\detector.proto
+
+// The detector service definition
+service Detector {
+  // trains the detector with CADModel
+  rpc Train (stream DetectorInput) returns (TrainResult) {
+}
+  // runs object detection and returns Pose
+  rpc Test (stream DetectorInput) returns (TestResult) {
+  }
+  // returns the detector configuration file
+  rpc GetConfig (Empty) returns (Config){
+  }
+}
+
+message DetectorInput {
+  // CAD file, Image...
+  Image Content = 1;
+  // Configuration of detector
+  string Config = 2;
+}
+
+message TrainResult {
+  // OK, NOK, created 10k templates...
+  string Result = 1;
+  // Image(s) as illustration of Train Result. Optional.
+  repeated Image Image = 2;
+}
+
+message TestResult {
+  // OK, NOK, Unknown...
+  string Result = 1;
+  // Pose(s) of detected object(s)
+  repeated Pose Pose = 2;
+  // Image(s) as illustration of Test Result.
+  repeated Image Image = 3;
+}
+
+message Image {
+  bytes Content = 1;
+  // Prominent parts of the image
+  repeated Highlight Highlights = 2;
+}
+
+// e.g. bounding box, feature etc. two points are specified
+message Highlight{
+  uint32 top = 1;
+  uint32 left = 2;
+  uint32 bottom = 3;
+  uint32 right = 4;
+}
+
+// 3D pose of an object relative to a fixed point
+message Pose {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+  double alpha = 4;
+  double beta = 5;
+  double gamma = 6;
+}
+
+message Config {
+  string Config = 1;
+}
+
+message Empty {}
