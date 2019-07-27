@@ -70,9 +70,11 @@ As for the recipe generator, there are more possibilities. Since detectors could
 
 The generator might also be deployed as part of the vision system. The advantages of this concept are better data protection possibilities and lower latency. The drawback in this case is the lower computing power and tougher access for ODS vendors.
 
-\section{Interfaces}
+\section{Integration Pattern}
+The introduced framework relies on a few services with standardized interfaces. Thus, a direct synchronous integration pattern is beneficial due to high performance and simple implementation. In case the framework shall be upgraded to allow for message queueing, user management integration, load balancing and the like, an extention with a service registry might come in handy.
+
 \subsection{Detector Containers}
-The detector containers are called during the execution of a recipe. The services might also be called in sequence. For this communication a standardized interface is of great help. As for the semantic, the two methods Train and Test are defined. For data transport RPC is a good choice due to its high performing request calls. With the Train and Test methods defined, most of the application logic can reside inside the server (detector container), hence changes of ODM do not cause changes for the client (recipe). The connection between recipe, OPC UA Vision server and cameras is implementation specific.
+The detector containers are called during the execution of a recipe. The services might also be called in sequence. For this communication a standardized interface is of great help. As for the semantic, two methods Train and Test are defined. For data transport RPC is a good choice due to its high performing request calls. With the Train and Test methods defined, most of the application logic can reside inside the server (detector container), hence changes of ODM do not cause changes for the client (recipe). The connection between recipe, OPC UA Vision server and cameras is implementation specific.
 
 \subsection{Recipe Generator}
 The recipe generator needs an interface for the OPC UA Vision server on the one hand and on the other hand for the recipe generator client. In case the generator is deployed in an industrial environment it would be reasonable to configure not only the recipe transfer but also the recipe generation via OPC UA to maintain a great interoperability within the shopfloor. For instance, CAD models can be created by cameras and automatically sent to the recipe generator. In case it is deployed in a web environment, an interface rather developed for web technologies is advantageous. For instance RPC with a RESTful adapter could be used for that purpose.
@@ -83,4 +85,9 @@ As of now, the image acquisition containers do not have a standardized interface
 \section{Orchestration of Recipe Management}
 The recipe, image acquisition- and  detector containers combine to recipe management of the OPC UA Vision server. As recipes handle image acquisition and detector container calling, one could say it serves as an orchestrator and is a single point of failure. A possible hazard would be applying too much application logic to the recipe, thus it should stay simple and only run necessary OD steps by calling the containers in sequence with a standardized interface. This maximizes cohesion of the components. In case putting several trained detector containers in sequence, the output of the Test method would have to be abstracted since the second and following containers would receive a pose of an object as input which is unlikely useful. Abstracting output types would again shift application logic to the recipe which should be minimized. Hence, sequencing OD containers should be scoped in a container which handles the sequencing internally and is externally callable via Train \& Test methods.
 
+\section{Roles}
+\subsection{Recipe Generator Client}
 
+\subsection{Detector Image Provider}
+
+\subsection{Camera Image Provider}

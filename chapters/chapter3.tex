@@ -5,7 +5,7 @@ ODS should be capable of coping with dynamically changing OD algorithms and base
 \begin{table}[h]
     \begin{center}
       \begin{minipage}{\textwidth}
-        \captionof{table}{Morphological box of the design possibilities of an ODS. Parameters are marked bold in the first column. Every parameter has possible configurations. A combination of configurations composes one concept, marked as colored lines.}\label{tab:concept} 
+        \captionof{table}[SOA Design Possibilities]{Morphological box of the design possibilities of an ODS. Parameters are marked bold in the first column. Every parameter has possible configurations. A combination of configurations composes one concept, marked as colored lines.}\label{tab:concept} 
         \begin{tikzpicture}[
             very thick,
             nodes={inner sep=\tabcolsep}
@@ -16,9 +16,9 @@ ODS should be capable of coping with dynamically changing OD algorithms and base
               row sep=\zeilenabstand
             ](m){
               \grafik{\textbf{Interface Semantic}}{img/white.png}
-                &\grafik{existing standard}{img/white.png}
-                &\grafik{self designed}{img/white.png}\\
-              \grafik{\textbf{Communication Pattern}}{img/white.png}
+                &\grafik{Existing Standard}{img/white.png}
+                &\grafik{Self Designed}{img/white.png}\\
+              \grafik{\textbf{Integration Pattern}}{img/white.png}
                 &\grafik{Client/Server}{img/white.png}
                 &\grafik{Publish/Subscribe}{img/white.png}\\
               \grafik{\textbf{Deployment as}}{img/white.png}
@@ -63,6 +63,17 @@ ODS should be capable of coping with dynamically changing OD algorithms and base
 
 Semantic defines the interface of the service. It handles the payload of the communication between server and client. That is depending on messaging technology, service definition of methods, return types and resources. OPC UA Vision \cite{VDMA2018OPCSpecification} and GCV RPC API \cite{Lastvisited2018-11-272018CloudGRPC} are two publicly available standards for ODS. In general, resorting to public standards is a good habit due to the already existing user base, detailed documentation, constant development and thorough testing. In contrast to that one could design the semantic for a service interface on his own with the advantage of freedom over all design decisions. However, this would mean a constant update of design work when adapting to new protocols or ODM, which is tedious and does not outweigh the advantages of public standards. When comparing OPC UA Vision and GCV RPC API one can see that the former is meant to be an abstract standard for all kinds of vision systems, the latter is tailored for the GCV service. Through abstraction the former is more durable than the latter. Also, OPC UA Vision is maintained by the OPC foundation and thus focuses on industrial applications. Another way of defining the service would be copying the method signatures and return types of the ODM. This would mean a changing interface towards the client with every new ODM, which is not eligible in the context of the fast-changing world of underlying ODM of the service. Instead, the semantic translation between ODM and service methods should be hidden. 
 
+The choice among direct point-to-point, hub-and-spoke, or hybrid integration approaches is driven 
+by factors such as 
+• current and planned number of integrated applications and technologies 
+• throughput and response time requirements of current and future integrated applications 
+• communication patterns (e.g., synchronous, message queues, publish-subscribe) and growing 
+numbers of integrated services by current and future applications 
+• support requirements for new applications, business transactions, and data requirements 
+• adoption rate and maturity of new technologies and standards in the industry 
+• business, organizational, and regulatory dynamics (e.g., the speed with which acquired com-
+panies must be integrated) \cite{Bianco2007EvaluatingArchitecture}
+
 MT defines how data is transported between entities. This includes base protocols, security designs, encoding and data transfer insurance. Note that since February 6, 2018 OPC UA offers the possibility to send its data via MQTT as specified in part 14 of the OPC UA specification, so you could "include" MQTT into OPC UA. However, MQTT can be used as a standalone MT, offering less features especially concerning information modeling, but with the advantage of creating less overhead. Also, the OPC UA can utilize HTTPS for transport, however not in a RESTful manner. \cite{Ronnholm2018IntegrationTranslator} This is due to a lacking adressing scheme. RESTful HTTP is centered around abstract resources that can be identified by a URL. Any body of data may therefore be manipulated independently of any intermediary application logic. This is not the case with HTTP in OPC UA. In addition, HTTP is deeply embedded into the communication stack and can therefore not be understood by an unrelated third party. Ronnholm introduces a possible adapter in his thesis. \cite{Ronnholm2018IntegrationTranslator}
 
 The environment (e.g. industrial or home automation) of the service has an effect on the MT. Especially for industrial environments a connection to OT is highly beneficial for real time applications. 
@@ -71,6 +82,6 @@ For convenience, one or more adapter can be offered towards the client or other 
 
 Deployment as Heroku container is possible, although dependent on the Heroku platform thus dependent on cloud deployment. For some use cases, especially those that require low latency, an edge deployment is more applicable. 
 
-There are many more implementation possibilities such as database integration, orchestration vs. choreography, continuous deployment and so forth. These aspects are not remarked in the concept phase of thesis as they are considered implementation specific.
+There are many more implementation possibilities such as database integration, orchestration vs. choreography, continuous deployment, service granularity, exception handling, user management and so forth. These aspects are not remarked in the concept phase of thesis as they are considered implementation specific.
 
-The following section introduce a possible concept for an ODS in an industrial environment.
+The following section introduces a possible concept for an ODS framework in an industrial environment.
