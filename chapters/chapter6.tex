@@ -1,17 +1,185 @@
 \chapter{Evaluation\label{cha:chapter6}}
-\section{Evaluation Parameters}
-As opposed to monolithic applications SOAs are highly agile and easily integrated into distributed systems. This hypothesis has to be supported by qualitative and quantitative test results. An example for a qualitative test would be a test center where the same OD algorithm has to be integrated into a SOA and a monolithic application. The integration should be executed by several equally skilled groups of which one half starts with SOA and the other with monolithic application. 
-Quelle mit Evaluierfragen heranziehen.
-Quantitative parameters could be the size of the service containers, the CPU and RAM load they utilize. The usability of the service is also of high impartance, e.g. the number of protocols that the interface offers, the documentation of the interface etc. 
-		\subsection{Time}
-		\subsection{Cost}
-		\subsection{Technology Dependence}
-\section{An Example Case Study}
-		\subsection{Assumptions}
-			\subsubsection{Before: monolithic system, was in use for 15 years}
-			\subsubsection{Now: Change to my system, then change/test of ODM shall happen}
-		\subsection{Time / Cost for stakeholders}
-			\subsubsection{Detector Image Providers}
-			\subsubsection{Camera Image Providers}
-            \subsubsection{Production Engineer}
-            In case the port has to be changed it is necessary to change it in three locations - dockerfile, gRPC client and gRPC server. 
+% \section{Evaluation Parameters}
+% As opposed to monolithic applications SOAs are highly agile and easily integrated into distributed systems. This hypothesis has to be supported by qualitative and quantitative test results. 
+
+% An example for a qualitative test would be a test center where the same OD algorithm has to be integrated into a SOA and a monolithic application. The integration should be executed by several equally skilled groups of which one half starts with SOA and the other with monolithic application. 
+% Another example of quality testing is how the architecture handles the CAP theorem. \cite{Newman2015BuildingMicroservices} This deals with the question of how data should be handled in case of connection errors. As of now this has been left unviewed in the demo application where the recipe storage is a simple folder on a file system. In a productive environment this will surely be necessary.
+% The usability of the service is also of high impartance, e.g. the number of protocols that the interface offers, the documentation of the interface etc. 
+
+% Quantitative parameters could be the size of the service containers, the CPU and RAM load they utilize, message compression and so forth.
+
+\section{The ATAM Method}
+\epigraph{It is better to be vaguely right than exactly wrong.}{Carveth Read (1848 – 1931) philosopher and logician}
+In this chapter an excerpt of the architecture tradeoff analysis method (ATAM, \cite{Kazman2000ATAMEvaluation}) as conducted in \cite{Bianco2007EvaluatingArchitecture} shall be used to evaluate the current implementation and underlying concept. It focuses on the analysis of quality attributes. Quality attributes, also known as \textbf{nonfunctional requirements}, include usability, performance, scalability, reliability, security, and modifiability. Subsection \ref{subseb:qualatt} provides some generic examples as provided in appendix A in \cite{Bianco2007EvaluatingArchitecture}. Subsections \ref{subsec:atamsteps} and \ref{subsec:atamgoa} introduce the necessary ATAM steps and the goal of finding risks and tradeoffs. 
+
+\subsection{Quality Attributes}
+\label{subseb:qualatt}
+The following quality attributes are decorated with generic examples which are directly quoted from appendix A in \cite{Bianco2007EvaluatingArchitecture}. 
+\subsubsection{Performance}
+\begin{itemize}
+    \item A sporadic request for service ‘X’ is received by the server during normal operation. The     system processes the request in less than ‘Y’ seconds. 
+    \item The service provider can process up to ‘X’ simultaneous requests during normal operation, keeping the response time on the server less than ‘Y’ seconds.  
+    \item The roundtrip time for a request from a service user in the local network to service ‘X’     during normal operation is less than ‘Y’ seconds. 
+\end{itemize}
+
+\subsubsection{Availability}
+\begin{itemize}
+    \item An improperly formatted message is received by a system during normal operation. The 
+system records the message and continues to operate normally without any downtime. 
+    \item An unusually high number of suspect service requests are detected (denial-of-service attack), and the system is overloaded. The system logs the suspect requests, notifies the system administrators, and continues to operate normally. 
+    \item Unscheduled server maintenance is required on server ‘X.’ The system remains operational in degraded mode for the duration of the maintenance. 
+    \item A service request is processed according to its specification for at least 99.99\,\% of all requests. 
+    \item A new service is deployed without impacting the operations of the system. 
+    \item A third-party service provider is unavailable; modules that use that service respond appropriately regarding the unavailability of the external service; and the system continues to operate without failures.
+\end{itemize}
+
+\subsubsection{Security}
+\begin{itemize}
+    \item A third-party service with malicious code is used by the system. The third-party service is unable to access data or interfere with the operation of the system. The system notifies the system administrators. 
+    \item An attack is launched attempting to access confidential customer data. The attacker is not able to break the encryption used in all the hops of the communication and where the data is persisted. The system logs the event and notifies the system administrators. 
+    \item A request needs to be sent to a third-party service provider, but the provider’s identity can not be validated. The system does not make the service request and logs all relevant information. The third party is notified along with the system administrator. 
+\end{itemize}
+
+\subsubsection{Testability}
+\begin{itemize}
+    \item An integration tester performs integration tests on a new version of a service that provides an interface for observing output. 90\,\% path coverage is achieved within one person-week. 
+\end{itemize}
+
+\subsubsection{Interoperability}
+\begin{itemize}
+    \item A new business partner that uses platform ‘X’ is able to implement a service user module that works with our available services in platform ‘Y’ in two person-days.  
+    \item A transaction of a legacy system running on platform ‘X’ is made available as a web service to an enterprise application that is being developed for platform ‘Y’ using the web services technology. The wrapping of the legacy operation as a service with proper security verification, transaction management, and exception handling is done in 10 person-days. 
+\end{itemize}
+
+\subsubsection{Modifiability}
+\begin{itemize}
+    \item A service provider changes the service implementation, but the syntax and the semantics of the interface do not change. This change does not affect the service users. 
+    \item A service provider changes the interface syntax of a service that is publicly available. The old version of the service is maintained for 12 months, and existing service users are not affected within that period.  
+    \item A service user is looking for a service. A suitable service is found that contains no more than ‘X’ percentage of unneeded operations, so the probability of the service provider changing is reduced. 
+\end{itemize}
+
+\subsubsection{Reliability}
+\begin{itemize}
+    \item A sudden failure occurs in the runtime environment of a service provider. After recovery, all transactions are completed or rolled back as appropriate, so the system maintains uncorrupted, persistent data. 
+    \item A service becomes unavailable during normal operation. The system detects and restores the service within two minutes. 
+\end{itemize}
+
+\subsection{ATAM Steps}
+\label{subsec:atamsteps}
+ATAM consists of following steps:
+\begin{enumerate}
+    \item Present the ATAM: The evaluation team presents a quick overview of the ATAM steps, the techniques used, and the outputs from the process. 
+    \item Present the business drivers: The system manager briefly presents the business drivers and context for the architecture.
+    \item Present the architecture: The architect presents an overview of the architecture.
+    \item Identify architectural approaches: The evaluation team and the architect itemize the architectural approaches discovered in the previous step. 
+    \item Generate the quality attribute utility tree: A small group of technically oriented stakeholders identifies, prioritizes, and refines the most important quality attribute goals in a utility tree format.
+    \item Analyze the architectural approaches: The evaluation team probes the architectural approaches in light of the quality attributes to identify risks, non-risks, and tradeoffs. 
+    \item Brainstorm and prioritize scenarios: A larger and more diverse group of stakeholders creates scenarios that represent their various interests. Then the group votes to prioritize the scenarios based on their relative importance. 
+    \item Analyze architectural approaches: The evaluation team continues to identify risks and tradeoffs while noting the impact of each scenario on the architectural approaches. 
+    \item Present results: The evaluation team recapitulates the ATAM steps, outputs, and recommendations.
+\end{enumerate}
+
+These steps are typically carried out in two phases. Phase 1 is architect-centric and concentrates on eliciting and analyzing architectural information. This phase includes a small group of technically oriented stakeholders concentrating on Steps 1 to 6. Phase 2 is stakeholder-centric, elicits points of view from a more diverse group of stakeholders, and verifies the results of the first phase. This phase involves a larger group of stakeholders, builds on the work of the first phase, and focuses on Steps 7 through 9. \cite{Jones2001EvaluateStudy} 
+
+\subsection{ATAM Goals}
+\label{subsec:atamgoa}
+It is desired to find risks and tradeoffs:
+\begin{itemize}
+    \item risks: architectural decisions that might create future problems for some quality attribute. A sample risk: The current version of the Database Management System is no longer supported by the vendor; therefore, no patches for security vulnerabilities will be created.
+    \item tradeoffs: architectural decisions that have an effect on more than one quality attribute.     For example, the decision to introduce concurrency improves latency but increases the cost of change for the affected modules. 
+\end{itemize}
+
+\section{Architecture Evaluation of Recipe Generator with ATAM Method}
+In this evaluation chapter we will cover steps 7 and 8 as described in subsection \ref{subsec:atamsteps}. As a goal we will identify risks and tradeoffs.
+
+\subsection{Quality Attribute Scenarios}
+
+\begin{longtable}{|P{0.08\linewidth}|P{0.15\linewidth}|P{0.16\linewidth} P{0.49\linewidth}|}
+\caption{Quality Attribute Scenarios}\label{tab:scen}\\
+\hline
+\rowcolor{Gray}
+\textbf{Number} & \textbf{Quality Attribute} & \multicolumn{2}{l|}{\textbf{Scenario}}\\
+\hline
+\endfirsthead
+\multicolumn{4}{c}%
+{\tablename\ \thetable\ -- \textit{Continued}} \\
+\hline
+\rowcolor{Gray}
+\textbf{Number} & \textbf{Quality Attribute} & \multicolumn{2}{l|}{\textbf{Scenario}}\\
+\hline
+\endhead
+\hline \multicolumn{4}{r}{\textit{Continued on next page}} \\
+\endfoot
+\hline
+\endlastfoot
+ 1 & Modifiability & Source:  & Detector Docker  Image Provider\\
+   & & Stimulus:  & Add a new detector\\ 
+   & & Artifact:  &  Docker registry \\ 
+   & & Environment:  & Detector provider familiar with Docker, gRPC and detector proto file\\ 
+   & & Response:  & New detector is added\\ 
+   & & Measure:  & No more than five person-days of detector provider team effort is required for the implementation (legal and financial agreements are not included).\\ \hline
+ 2 & Modifiability & Source:  & Camera Docker Image Provider\\
+   & & Stimulus:  & Add a new camera to the vision system\\ 
+   & & Artifact:  &  Camera \\ 
+   & & Environment:  & Camera provider familiar with Docker, gRPC and camera proto file\\ 
+   & & Response:  & New camera is added\\ 
+   & & Measure:  & No more than four person-days of camera provider team effort is required for the implementation (legal and financial agreements are not included).\\ \hline
+ 2 & Interoperability & Source  & \\
+   & & Stimulus  & \\ 
+   & & Artifact  & \\ 
+   & & Environment  & A new business partner that uses platform ‘X’ is able to implement a service user module that works with our available services in platform ‘Y’ in two person-days. \\ 
+   & & Response  & \\ 
+   & & Response Measure  & \\ \hline
+ 3 & Reliability & Source  & \\
+   & & Stimulus  & \\ 
+   & & Artifact  & \\ 
+   & & Environment  & A service becomes unavailable during normal operation.  The system detects and restores the service within two minutes.\\ 
+   & & Response  & \\ 
+   & & Response Measure  & \\ \hline
+ 4 & Reliability & Source  & \\
+   & & Stimulus  & \\ 
+   & & Artifact  & \\ 
+   & & Environment  & A sudden failure occurs in the runtime environment of a service provider.  Afterrecov-  ery,  all  transactions  are  completed  or  rolled  back  as  appropriate,  so  thesystem maintains un- corrupted, persistent data.\\ 
+   & & Response  & \\ 
+   & & Response Measure  & \\ \hline
+\end{longtable}
+
+\subsection{Architectural Analysis of Scenarios}
+
+\begin{longtable}{| P{0.2\textwidth} | P{0.74\textwidth} |}
+\caption{Architectural Analysis of Scenarios}\label{tab:scenan}\\
+\hline
+\endfirsthead
+\multicolumn{2}{c}%
+{\tablename\ \thetable\ -- \textit{Continued}} \\
+\hline
+\endhead
+\hline \multicolumn{2}{r}{\textit{Continued on next page}} \\
+\endfoot
+\hline
+\endlastfoot
+\rowcolor{Gray}
+\multicolumn{2}{ |l| }{\textbf{Analysis for Scenario 1}} \\ \hline
+Scenario Summary & New Detector added to Docker Registry in no more than five person-days\\ \hline
+Business Goal(s) & Extending the available object detection possibilities\\ \hline
+Quality Attribute & Modifiability\\ \hline
+Architectural Approaches and Reasoning & Detector communication depends on gRPC which covers many programming languages. \newline Docker registry can be made easily accessible for the provider and is a well known technology.\\ \hline
+Risks &  Possible too much of a lock in effect of both technologies\\ \hline
+Tradeoffs &  The static Train/Test interface might not (yet) be suitable for all detection purposes, although once implemented it is very easy to use and might become more popular as a versioned standard.\\ \hline
+\rowcolor{Gray}
+\multicolumn{2}{ |l| }{\textbf{Analysis for Scenario 2}} \\ \hline
+Scenario Summary & New camera added to vision system in no more than four person-days\\ \hline
+Business Goal(s) & Possibility of heterogenous camera ecosystem\\ \hline
+Quality Attribute & Modifiability\\ \hline
+Architectural Approaches and Reasoning & Docker container including or alternatively just gRPC server running on camera which allows for many programming languages \\ \hline
+Risks &  The camera firmware is most likely unmodifiable, thus a middleware is likely to be needed \\ \hline
+Tradeoffs & In theory the same underlying technology (Docker + gRPC) can be conveniently used for communication, but in practice at least for the camera this might end up cumbersome. \\ \hline
+\rowcolor{Gray}
+\multicolumn{2}{ |l| }{\textbf{Analysis for Scenario 3}} \\ \hline
+Scenario Summary & \\ \hline
+Business Goal(s) & \\ \hline
+Quality Attribute & \\ \hline
+Architectural Approaches and Reasoning &  \\ \hline
+Risks &  \\ \hline
+Tradeoffs &  \\ \hline
+\end{longtable}

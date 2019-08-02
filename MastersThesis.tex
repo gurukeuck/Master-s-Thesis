@@ -1,8 +1,9 @@
 \documentclass[11pt,bibtotoc,liststotoc,DIV12,BCOR8,openany,a4paper]{book}
 
 % use this declaration to set specific page margins
-%\usepackage[a4paper , lmargin = {2.7cm} , rmargin = {2.9cm} , tmargin = {2.7cm} , bmargin = {4.6cm} ]{geometry}
-\usepackage[a4paper]{geometry}
+% \usepackage[a4paper , twoside, lmargin = {2.7cm} , rmargin = {2.9cm} , tmargin = {2.7cm} , bmargin = {4.6cm} ]{geometry}
+\usepackage[a4paper, twoside, bindingoffset=1cm]{geometry}
+%\usepackage[a4paper]{geometry}
 
 \usepackage[english]{babel}
 \usepackage{bibgerm}       		% german references
@@ -10,6 +11,7 @@
 \usepackage{graphicx} 				% it's recommended to use PDF images but you can use JPG or PNG as well
 \usepackage{url}           		% format URLs
 \usepackage{hyperref} 				% create hyperlinks
+\usepackage{epigraph}       % inspirational quotes
 \usepackage{listings}	% for source code
 \lstset{frameround=fttt,language=Python,numbers=left,breaklines=true}
 \usepackage{subfig}						% two figures next to each other (example: figure 3a), figure 3b)
@@ -33,6 +35,7 @@
 \input{./misc/hyphenation} 					% use this file to set explicit hyphenations (doesn't seem to work correctly)
 
 %% Useful packages
+% \usepackage{showframe}
 \usepackage{geometry}
 \usepackage{diagbox}
 \usepackage{amsmath}
@@ -41,17 +44,20 @@
 %\usepackage[colorlinks=true, allcolors=blue]{hyperref}
 \usepackage{url}
 \usepackage{minted}
+\usepackage{tabu}
 \usepackage{enumitem}
 \usepackage{hyperref}
-\usepackage{color}
+\usepackage{color, colortbl}
 \usepackage{multirow}
-\usepackage{longtable}
+\usepackage{longtable,array,ragged2e}
+\newcolumntype{P}[1]{>{\RaggedRight\arraybackslash\hspace{0pt}}p{#1}}
 \usepackage{eurosym}
 \usepackage[]{acronym}
 \usepackage{setspace}
 \definecolor{mypink1}{rgb}{0.858, 0.188, 0.478}
+\definecolor{Gray}{gray}{0.9}
 
-%morpholical box
+%morphological box
 \usepackage{booktabs}
 \usepackage{tikz}
 \usetikzlibrary{matrix}
