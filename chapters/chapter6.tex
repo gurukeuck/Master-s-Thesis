@@ -1,25 +1,19 @@
 \chapter{Evaluation\label{cha:chapter6}}
-% \section{Evaluation Parameters}
-% As opposed to monolithic applications SOAs are highly agile and easily integrated into distributed systems. This hypothesis has to be supported by qualitative and quantitative test results. 
-
-% An example for a qualitative test would be a test center where the same OD algorithm has to be integrated into a SOA and a monolithic application. The integration should be executed by several equally skilled groups of which one half starts with SOA and the other with monolithic application. 
-% Another example of quality testing is how the architecture handles the CAP theorem. \cite{Newman2015BuildingMicroservices} This deals with the question of how data should be handled in case of connection errors. As of now this has been left unviewed in the demo application where the recipe storage is a simple folder on a file system. In a productive environment this will surely be necessary.
-% The usability of the service is also of high impartance, e.g. the number of protocols that the interface offers, the documentation of the interface etc. 
-
-% Quantitative parameters could be the size of the service containers, the CPU and RAM load they utilize, message compression and so forth.
 
 \section{The ATAM Method}
 \epigraph{It is better to be vaguely right than exactly wrong.}{Carveth Read (1848 – 1931) philosopher and logician}
-In this chapter an excerpt of the architecture tradeoff analysis method (ATAM, \cite{Kazman2000ATAMEvaluation}) as conducted in \cite{Bianco2007EvaluatingArchitecture} shall be used to evaluate the current implementation and underlying concept. It focuses on the analysis of quality attributes. Quality attributes, also known as \textbf{nonfunctional requirements}, include usability, performance, scalability, reliability, security, and modifiability. Subsection \ref{subseb:qualatt} provides some generic examples as provided in appendix A in \cite{Bianco2007EvaluatingArchitecture}. Subsections \ref{subsec:atamsteps} and \ref{subsec:atamgoa} introduce the necessary ATAM steps and the goal of finding risks and tradeoffs. 
+In this chapter, an excerpt of the architecture tradeoff analysis method (ATAM,~\cite{Kazman2000ATAMEvaluation}) as conducted in~\cite{Bianco2007EvaluatingArchitecture} shall be used to evaluate the current implementation and underlying concept. ATAM is a method aimed at illuminating risks in the architecture through the identification of attribute trends, rather than at precise characterizations of measurable quality attribute values.~\cite{Kazman2008ExperienceAnalysis} ATAM focuses on the analysis of quality attributes. Quality attributes, also known as \textbf{nonfunctional requirements}, include usability, performance, scalability, reliability, security and modifiability. Subsection~\ref{subseb:qualatt} provides some generic examples. Subsections~\ref{subsec:atamsteps} and~\ref{subsec:atamgoa} introduce the necessary ATAM steps and the goal of finding risks and tradeoffs. For the introduced framework it is an applicable method as it stays high level. Once it is implemented in an industrial environment, a more quantifiable method is necessary.  
+
+ATAM has been introduced by Kazman in 1998~\cite{Kazman1998TheMethod} at Carnegie Mellon University in Pennsylvania. It was used on at least 18 architectures in the 2000s.~\cite{Bass2007RiskEvaluations} In 2013 Zalewski introduced an updated ATAM method which can be applied at an even earlier stage of architecture evaluation.~\cite{Zalewski2013BeyondSystems}
 
 \subsection{Quality Attributes}
 \label{subseb:qualatt}
-The following quality attributes are decorated with generic examples which are directly quoted from appendix A in \cite{Bianco2007EvaluatingArchitecture}. 
+The following example quality attributes are decorated with generic examples which are directly quoted from Appendix A in \textit{Evaluating a Service-Oriented Architecture}.~\cite{Bianco2007EvaluatingArchitecture} 
 \subsubsection{Performance}
 \begin{itemize}
-    \item A sporadic request for service ‘X’ is received by the server during normal operation. The     system processes the request in less than ‘Y’ seconds. 
+    \item A sporadic request for service ‘X’ is received by the server during normal operation. The system processes the request in less than ‘Y’ seconds. 
     \item The service provider can process up to ‘X’ simultaneous requests during normal operation, keeping the response time on the server less than ‘Y’ seconds.  
-    \item The roundtrip time for a request from a service user in the local network to service ‘X’     during normal operation is less than ‘Y’ seconds. 
+    \item The roundtrip time for a request from a service user in the local network to service ‘X’ during normal operation is less than ‘Y’ seconds. 
 \end{itemize}
 
 \subsubsection{Availability}
@@ -66,7 +60,7 @@ system records the message and continues to operate normally without any downtim
 
 \subsection{ATAM Steps}
 \label{subsec:atamsteps}
-ATAM consists of following steps:
+ATAM consists of the following steps (directly quoted from~\cite{Bianco2007EvaluatingArchitecture}):
 \begin{enumerate}
     \item Present the ATAM: The evaluation team presents a quick overview of the ATAM steps, the techniques used, and the outputs from the process. 
     \item Present the business drivers: The system manager briefly presents the business drivers and context for the architecture.
@@ -79,7 +73,7 @@ ATAM consists of following steps:
     \item Present results: The evaluation team recapitulates the ATAM steps, outputs, and recommendations.
 \end{enumerate}
 
-These steps are typically carried out in two phases. Phase 1 is architect-centric and concentrates on eliciting and analyzing architectural information. This phase includes a small group of technically oriented stakeholders concentrating on Steps 1 to 6. Phase 2 is stakeholder-centric, elicits points of view from a more diverse group of stakeholders, and verifies the results of the first phase. This phase involves a larger group of stakeholders, builds on the work of the first phase, and focuses on Steps 7 through 9. \cite{Jones2001EvaluateStudy} 
+These steps are typically carried out in two phases. Phase~1 is architect-centric and concentrates on eliciting and analyzing architectural information. This phase includes a small group of technically oriented stakeholders concentrating on Steps~1 to~6. Phase~2 is stakeholder-centric, elicits points of view from a more diverse group of stakeholders, and verifies the results of the first phase. This phase involves a larger group of stakeholders, builds on the work of the first phase, and focuses on Steps~7 through~9.~\cite{Jones2001EvaluateStudy} 
 
 \subsection{ATAM Goals}
 \label{subsec:atamgoa}
@@ -90,11 +84,12 @@ It is desired to find risks and tradeoffs:
 \end{itemize}
 
 \section{Architecture Evaluation of Recipe Generator with ATAM Method}
-In this evaluation chapter we will cover steps 7 and 8 as described in subsection \ref{subsec:atamsteps}. As a goal we will identify risks and tradeoffs.
+In this evaluation chapter, we will cover steps 7 and 8 as described in subsection~\ref{subsec:atamsteps}. As a goal, we will identify risks and tradeoffs. The list is claimed to be incomplete and just covers some important aspects that were considered during service design. Also, in practice, ATAM can be iterated which is dropped here.
 
 \subsection{Quality Attribute Scenarios}
 
-\begin{longtable}{|P{0.08\linewidth}|P{0.15\linewidth}|P{0.16\linewidth} P{0.49\linewidth}|}
+{\renewcommand{\arraystretch}{0.7} % vertical spacing between rows
+\begin{longtable}{|P{0.08\linewidth}|P{0.2\linewidth}|P{0.16\linewidth} P{0.44\linewidth}|}
 \caption{Quality Attribute Scenarios}\label{tab:scen}\\
 \hline
 \rowcolor{Gray}
@@ -112,36 +107,48 @@ In this evaluation chapter we will cover steps 7 and 8 as described in subsectio
 \endfoot
 \hline
 \endlastfoot
- 1 & Modifiability & Source:  & Detector Docker  Image Provider\\
+ 1 & Modifiability & Source:  & Detector Docker Image Provider\\
    & & Stimulus:  & Add a new detector\\ 
-   & & Artifact:  &  Docker registry \\ 
+   & & Artifact:  &  Docker Registry \\ 
    & & Environment:  & Detector provider familiar with Docker, gRPC and detector proto file\\ 
    & & Response:  & New detector is added\\ 
-   & & Measure:  & No more than five person-days of detector provider team effort is required for the implementation (legal and financial agreements are not included).\\ \hline
+   & & Response Measure:  & No more than five person-days of detector provider team effort is required for the implementation (legal and financial agreements are not included).\\ \hline 
  2 & Modifiability & Source:  & Camera Docker Image Provider\\
    & & Stimulus:  & Add a new camera to the vision system\\ 
    & & Artifact:  &  Camera \\ 
    & & Environment:  & Camera provider familiar with Docker, gRPC and camera proto file\\ 
    & & Response:  & New camera is added\\ 
-   & & Measure:  & No more than four person-days of camera provider team effort is required for the implementation (legal and financial agreements are not included).\\ \hline
- 2 & Interoperability & Source  & \\
-   & & Stimulus  & \\ 
-   & & Artifact  & \\ 
-   & & Environment  & A new business partner that uses platform ‘X’ is able to implement a service user module that works with our available services in platform ‘Y’ in two person-days. \\ 
-   & & Response  & \\ 
-   & & Response Measure  & \\ \hline
- 3 & Reliability & Source  & \\
-   & & Stimulus  & \\ 
-   & & Artifact  & \\ 
-   & & Environment  & A service becomes unavailable during normal operation.  The system detects and restores the service within two minutes.\\ 
-   & & Response  & \\ 
-   & & Response Measure  & \\ \hline
- 4 & Reliability & Source  & \\
-   & & Stimulus  & \\ 
-   & & Artifact  & \\ 
-   & & Environment  & A sudden failure occurs in the runtime environment of a service provider.  Afterrecov-  ery,  all  transactions  are  completed  or  rolled  back  as  appropriate,  so  thesystem maintains un- corrupted, persistent data.\\ 
-   & & Response  & \\ 
-   & & Response Measure  & \\ \hline
+   & & Response Measure:  & No more than four person-days of camera provider team effort is required for the implementation (legal and financial agreements are not included).\\ \hline
+ 3 & Modifiability & Source:  & Recipe Generator Client\\
+   & & Stimulus:  & Add a new proto file version\\ 
+   & & Artifact:  &  Camera or Detector \\ 
+   & & Environment:  & A new version of a proto file is necessary due to missing message types\\ 
+   & & Response:  & New proto file is added\\ 
+   & & Response Measure:  & No more than one person-day of effort is necessary. All existing camera and detector service remain functional.\\ \hline
+ 4 & Interoperability & Source  & Framework Architect\\
+   & & Stimulus:  & Replace or scratch Docker\\ 
+   & & Artifact:  & Detector and Camera Image Docker Containers\\ 
+   & & Environment:  & Docker is not allowed or not possible to use\\ 
+   & & Response:  & Docker is replaced or scratched\\ 
+   & & Response Measure:  & No more than fifteen person-days of framework architect effort is required for the implementation\\ \hline
+ 5 & Performance & Source  & Detector Docker Image Provider\\
+   & & Stimulus:  & Send a file to detector\\ 
+   & & Artifact:  & Detector Docker Container\\ 
+   & & Environment:  & CAD file input not larger than 10\,MB sent to detector\\ 
+   & & Response: & File to detector sent\\ 
+   & & Response Measure:  & The trip time for a request from detector client in the local network to detector during normal operation is less than 2 seconds.\\ \hline
+ 6 & Reliability & Source  & Framework Architect\\
+   & & Stimulus  & Service failure\\ 
+   & & Artifact  & All components\\ 
+   & & Environment  & A sudden failure occurs in the runtime environment of a service.  \\ 
+   & & Response  & After recovery, all transactions are completed or rolled back as appropriate, so the system maintains uncorrupted, persistent data.\\ 
+   & & Response Measure:  & Manual test if data is corrupt or inconsistent.\\ \hline
+ 7 & Security & Source  & A possible attacker\\
+   & & Stimulus  & A malware is included in the system\\ 
+   & & Artifact  & Camera or Detector Docker Container\\ 
+   & & Environment  & We have to face a denial-of-service attack.  \\ 
+   & & Response  & The malware is detected quickly, best before entering the framework. Necessary information to possibly identify the attacker is logged.\\ 
+   & & Response Measure:  & Our system is not operable for not more than an hour.\\ \hline
 \end{longtable}
 
 \subsection{Architectural Analysis of Scenarios}
@@ -163,23 +170,56 @@ In this evaluation chapter we will cover steps 7 and 8 as described in subsectio
 Scenario Summary & New Detector added to Docker Registry in no more than five person-days\\ \hline
 Business Goal(s) & Extending the available object detection possibilities\\ \hline
 Quality Attribute & Modifiability\\ \hline
-Architectural Approaches and Reasoning & Detector communication depends on gRPC which covers many programming languages. \newline Docker registry can be made easily accessible for the provider and is a well known technology.\\ \hline
-Risks &  Possible too much of a lock in effect of both technologies\\ \hline
+Architectural Approaches and Reasoning & Detector communication depends on gRPC which covers many programming languages and a REST gateway. \newline Docker registry can be made easily accessible for the provider and is a well-known technology.\\ \hline
+Risks &  Possible too much of a lock-in effect of both technologies\\ \hline
 Tradeoffs &  The static Train/Test interface might not (yet) be suitable for all detection purposes, although once implemented it is very easy to use and might become more popular as a versioned standard.\\ \hline
 \rowcolor{Gray}
 \multicolumn{2}{ |l| }{\textbf{Analysis for Scenario 2}} \\ \hline
 Scenario Summary & New camera added to vision system in no more than four person-days\\ \hline
-Business Goal(s) & Possibility of heterogenous camera ecosystem\\ \hline
+Business Goal(s) & Possibility of heterogeneous camera ecosystem\\ \hline
 Quality Attribute & Modifiability\\ \hline
 Architectural Approaches and Reasoning & Docker container including or alternatively just gRPC server running on camera which allows for many programming languages \\ \hline
-Risks &  The camera firmware is most likely unmodifiable, thus a middleware is likely to be needed \\ \hline
-Tradeoffs & In theory the same underlying technology (Docker + gRPC) can be conveniently used for communication, but in practice at least for the camera this might end up cumbersome. \\ \hline
+Risks &  The camera firmware can be unmodifiable, thus a middleware is likely to be needed. \\ \hline
+Tradeoffs & In theory, the same underlying technology (Docker + gRPC) can be conveniently used for communication between recipe and camera, but in practice, at least for the camera, this might end up cumbersome without a fitting middleware. \\ \hline
 \rowcolor{Gray}
 \multicolumn{2}{ |l| }{\textbf{Analysis for Scenario 3}} \\ \hline
-Scenario Summary & \\ \hline
-Business Goal(s) & \\ \hline
-Quality Attribute & \\ \hline
-Architectural Approaches and Reasoning &  \\ \hline
-Risks &  \\ \hline
-Tradeoffs &  \\ \hline
+Scenario Summary & A new proto file version is added in no more than on person-day.\\ \hline
+Business Goal(s) & Staying up to date with current ODMs\\ \hline
+Quality Attribute & Modifiability\\ \hline
+Architectural Approaches and Reasoning & gRPC offers a convenient way of expanding proto files. As long as no messages are deleted or overwritten, the system remains downward compatible.\\ \hline
+Risks &  None\\ \hline
+Tradeoffs &  The more messages are created, the more overhead will be sent over the channels.\\ \hline
+\rowcolor{Gray}
+\multicolumn{2}{ |l| }{\textbf{Analysis for Scenario 4}} \\ \hline
+Scenario Summary & Replace or scratch Docker in no more than 15 person-days.\\ \hline
+Business Goal(s) & Permit easy integration with new business partners. \\ \hline
+Quality Attribute & Interoperability\\ \hline
+Architectural Approaches and Reasoning & Detector and Camera gRPC servers/clients do not need Docker for successful communication. It offers a huge convenience for sharing them, starting them, handling dependencies, etc. A switch to e.g. Heroku would require a partial rewrite of the framework.\\ \hline
+Risks &  Too much effort included rewriting the framework. Instead, an alternative framework might be used.\\ \hline
+Tradeoffs & If Docker is available, the ease of service administration is very high. If not, the flexibility is higher but requires more effort.\\ \hline
+\rowcolor{Gray}
+\multicolumn{2}{ |l| }{\textbf{Analysis for Scenario 5}} \\ \hline
+Scenario Summary & A 10\,MB file is sent to detector in less than 2 seconds. \\ \hline
+Business Goal(s) & Compatible message transmission speed.\\ \hline
+Quality Attribute & Performance\\ \hline
+Architectural Approaches and Reasoning &  gRPC sends its data via protobufs which are a binary format specialized in high-performance serialization and deserialization. If an image has to be transferred between OPC UA Server and Client, then the emerging Time Sensitive Networking will help facing real-time transmission challenges.\\ \hline
+Risks & If too slow, the process might the bottleneck in production.\\ \hline
+Tradeoffs &  None\\ \hline
+\rowcolor{Gray}
+\multicolumn{2}{ |l| }{\textbf{Analysis for Scenario 6}} \\ \hline
+Scenario Summary & Uncorrupted, persistent data remains on the system after a service failure.\\ \hline
+Business Goal(s) & Industrial-grade reliability \\ \hline
+Quality Attribute & Reliability\\ \hline
+Architectural Approaches and Reasoning & The framework relies on service choreography and client/server communication. Thus, every component has to ensure uncorrupted and persistent data. In the future, a messaging broker could be introduced for better reliability.\\ \hline
+Risks & Currently, no reliability is granted, so a service failure will result in a failure of most components of the system \\ \hline
+Tradeoffs & Adding a message broker adds reliability but also complexity. \\ \hline
+\rowcolor{Gray}
+\multicolumn{2}{ |l| }{\textbf{Analysis for Scenario 7}} \\ \hline
+Scenario Summary & A denial-of-service attack causes no more than an hour of downtime of the framework.\\ \hline
+Business Goal(s) & Offering a secure framework with little downtime. \\ \hline
+Quality Attribute & Security\\ \hline
+Architectural Approaches and Reasoning & The Docker Hub is intended to be accessible by many vendors to ensure a variety of detectors and cameras. Every new vendor has to ensure its integrity. New detectors and cameras have to be tested thoroughly for a possible malware function. Through the standardized interface, a malfunctioning service can best be replaced quickly by an equivalent one offered by another vendor.\\ \hline
+Risks &  A service that is relied on in production reveals itself as malware can be hard to replace in the given time of one hour. Redundant services by multiple vendors can help out in this case.\\ \hline
+Tradeoffs & Due to possibly high numbers of services and creative attackers testing every new vendor and service can be a tedious task.\\ \hline
 \end{longtable}
+}

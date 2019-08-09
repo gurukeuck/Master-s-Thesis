@@ -1,10 +1,10 @@
-\documentclass[11pt,bibtotoc,liststotoc,DIV12,BCOR8,openany,a4paper]{book}
+\documentclass[11pt,DIV12,BCOR8,openany,a4paper]{book}
 
 % use this declaration to set specific page margins
 % \usepackage[a4paper , twoside, lmargin = {2.7cm} , rmargin = {2.9cm} , tmargin = {2.7cm} , bmargin = {4.6cm} ]{geometry}
 \usepackage[a4paper, twoside, bindingoffset=1cm]{geometry}
 %\usepackage[a4paper]{geometry}
-
+\usepackage[nottoc, notlof, notlot]{tocbibind} % include bibliography in table of contents
 \usepackage[english]{babel}
 \usepackage{bibgerm}       		% german references
 \usepackage[utf8x]{inputenc} % german characters
@@ -32,7 +32,7 @@
 % set path where images are stored
 \graphicspath{{./img/}}
 
-\input{./misc/hyphenation} 					% use this file to set explicit hyphenations (doesn't seem to work correctly)
+% \input{./misc/hyphenation} 					% use this file to set explicit hyphenations (doesn't seem to work correctly)
 
 %% Useful packages
 % \usepackage{showframe}
@@ -217,26 +217,23 @@
    	\thispagestyle{empty}
     \cleardoublepage
     
-    % \include{./misc/thanx}
-    % \thispagestyle{empty}
-    % \cleardoublepage
+    \include{./misc/thanx}
+    \thispagestyle{empty}
+    \cleardoublepage
     
-    % \include{./misc/self-assertion} 
-    % \thispagestyle{empty}
-    % \cleardoublepage
+    \include{./misc/self-assertion} 
+    \thispagestyle{empty}
+    \cleardoublepage
     
     
-    % \include{./misc/abstract}
-    % \thispagestyle{empty}
+    \include{./misc/abstract}
+    \thispagestyle{empty}
     % \cleardoublepage
     % % \include{./misc/abstract_de}
     % % \thispagestyle{empty}
     
-    \setcounter{tocdepth}{3}
+    % \setcounter{tocdepth}{2}
     \tableofcontents
-    \thispagestyle{empty}
-    
-    \include{./misc/acronyms}
     \thispagestyle{empty}
     
     \listoffigures
@@ -244,6 +241,13 @@
     
     \listoftables
     \thispagestyle{empty}
+    
+    \include{./misc/acronyms}
+    \thispagestyle{empty}
+    
+    \include{./misc/glossary}
+    \thispagestyle{empty}
+
     
     
 % --------------------------------------------------------------
@@ -263,9 +267,12 @@
 		
 		% if you want to provide a glossary with explanations of important terms put it in here
 
+    \input{./misc/annex}
+
+    
     \bibliographystyle{vancouver}
     \bibliography{./bib/references}
     
-    \input{./misc/annex}
+
 
 \end{document}
