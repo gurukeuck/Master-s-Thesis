@@ -1,71 +1,63 @@
 \chapter{Concept\label{cha:chapter4}}
-WARUM CAD FILES? ERKLÄREN
-
-In this concept, the ODS is a recipe for an OPC Vision server. See fig.~\ref{fig:concept} for an overview. 
+The concept centers around two main components, RG and the OPC UA ViS of the \textit{Vision System} VS. See fig.~\ref{fig:concept} for an overview. 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{img/Concept.pdf}
-    \caption[Concept]{Illustration of the industrial ODS concept. Ellipses denote inputs, solid rectangles systems, dotted rectangles scopes of systems and notes the content of a file. The OPC Foundation has not yet released the OPC UA Vision server specification for cameras, hence it is marked grey.}
+    \caption[Concept]{Illustration of the industrial ODS concept. The dotted rectangle denotes the scope of the recipe management. The OPC Foundation has not yet released the OPC UA Vision server specification for cameras, hence it is marked grey.}
     \label{fig:concept}
 \end{figure}
 
-The ODS is a trained detector container which is generated with a CAD model and an untrained detector as input. The detector must provide two methods:
+Camera providers and detector providers\footnote{For the different roles please look up in annex~\ref{sec:involvedparties}.} push images to the Docker Hub.  The concept does not necessarily rely on Docker, another virtualization technology can be utilized as well. RG trains the detection Docker image, and pushes it back to the Docker Hub. Then, RG generates a recipe. Recipes are scripts which handle camera image acquisition- and detection container calling. Camera image acquisition is currently set to be handled between image acquisition containers and cameras directly (or, the container is deployed on the camera itself). This might change shortly. During a phone interview conducted on April 30th, 2019, VDMA member Dr. Reinhard Heister stated that part 2 of the OPC Vision specification would direct the component layer.~\cite{Heister2019OPCFuture} A component can be a camera that offers an OPC ViS itself. For this task, OPC foundation and EMVA, supervisor of the GenICam interface for cameras~\cite{EMVA2019GenICam2019}, will join forces. Hence in a few years' time, it will be possible to have the VS to be interoperable with any camera supporting OPC UA Vision and the images can be acquired via the OPC servers.
+
+The following sections describe the concept in more detail.
+
+\section{Recipe Generation, Transfer and Execution}
+\subsection{Generation}
+    The ODS is a trained detector container which is generated with a CAD model and an untrained detector as input. The detector must provide two methods:
 \begin{tabbing}
     space \= space \= spacespacespace \= spacespacespacespace \= spacespacespace \kill
     \>  Train(\\
     \>  \>  (in)	 \> 	CADType          \> CADModel); \\
+    \>  \>  (in)	 \> 	String          \> Result); \\
     \>  Test(\\
     \>  \>  (in)	 \> 	ImageType     \> Image\\
     \>  \>  (out)	 \> 	PoseType           \> Pose); 
 \end{tabbing}\label{detectormethods}
 
-Train is a training routine which generates several views or templates from a CAD model. It must be preconfigured by the detector provider, e.g. learning rates of neural networks have to be preset. After training, the detector container includes generated templates or views and is callable with the Test method.  Test requires an image for processing the pose of an object aided by the generated templates.  Input and output types are not specified in this thesis. The container is illustrated as a Docker image; the implementation as such is not mandatory however. 
+Train is a training routine which generates several views or templates from a CAD model. It should be preconfigured by the detector provider, e.g. learning rates of neural networks have to be preset. After training, the detector container includes generated templates or views and is callable with the Test method.  Test requires a camera image for processing the pose of an object aided by the generated templates.  Input and output types are proposed in the implementation and annex~\ref{proto} but can be versioned and altered if needed. Finally, GenerateRecipe puts image acquisition- and detector container into a sequence. When triggered, an image is grabbed and passed to the Test method of the detector. Test outputs the pose of the object in the image.
 
-The detector container is added to recipe management of the VS via OPC UA Vision server. Recipes are scripts which handle image acquisition- and detection container calling and OPC UA Vision server interaction. The recipe generator or another entity can add scripts. Image acquisition is currently set to be handled between image acquisition containers and cameras directly. This might change shortly. During a phone interview conducted on April 30th, 2019, VDMA member Dr. Reinhard Heister stated that part 2 of the OPC Vision specification would direct the component layer. A component can be a camera that offers an OPC Vision server itself. For this task, OPC foundation and EMVA, supervisor of the GenICam interface~\cite{EMVA2019GenICam2019} for cameras, will join forces. Hence in a few years' time, it will be possible to have the VS to be interoperable with any camera supporting OPC Vision and the images can be acquired via the OPC servers.
-
-
-\section{Sequence Diagram}
-Figs.~\ref{fig:runtimeviewgen} and~\ref{fig:runtimeviewexec} show an example sequence diagram of the service generation, transfer and execution. The approach is as follows:
+\subsection{Transfer}
+See figure~\ref{fig:runtimeviewgen} for a sequence diagram. Transfer adheres to the OPC UA Vision specification.
 \begin{figure}
     \centering
     \includegraphics[width=1.2\textwidth]{img/OPCUAVisionAddRecipe.pdf}
-    \caption[Sequence diagram of method based recipe transfer]{Sequence diagram of method based recipe transfer to OPC UA Vision server. Notes on OPC UA server-side denote methods which are not covered by OPC Vision specification. Not all parameters of method signatures are shown. Example values are provided.}
+    \caption[Sequence diagram of method based recipe transfer]{Sequence diagram of method based recipe transfer to OPC UA Vision server. Notes on OPC UA server-side denote procedures which are not defined by OPC Vision specification but only described. Not all parameters of method signatures are shown. Example values are provided.}
     \label{fig:runtimeviewgen}
 \end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1.2\textwidth]{img/OPCUAVisionPrepareRecipe.pdf}
-    \caption[Sequence diagram of recipe execution]{Sequence diagram of recipe execution of method based OPC UA Vision server. Notes on OPC UA server-side denote the recipe which is not covered by OPC Vision specification. Not all parameters of method signatures are shown. Example values are provided.}
-    \label{fig:runtimeviewexec}
-\end{figure}
-
-\begin{itemize}
-    \item Generation and Transfer
     \begin{itemize}
-        \item TrainDetector trains the detector with the Train method using a CAD model as input. The detector service changes state from untrained to trained and can subsequently be called via Test method.
-        \item GenerateRecipe puts image acquisition and detector into a sequence. When triggered, an image is grabbed and passed to the Test method of the detector. Test outputs the pose of the object in the image.
-        \item Transfer initiates detector-, image acquisition- or recipe transfer. The object to be transferred is identified with the ExternalId.
         \item AddRecipe creates a new recipe object and maps an InternalId to the ExternalId. ExternalId is an OPC UA datatype identifying a recipe in the view of the environment, InternalId is an OPC UA data type identifying an instance of the recipe on the VS.  InternalId is necessary because recipes can not only be handled via the server but also locally on the VS. For the OPC UA client, only the ExternalId should be callable and internal ambiguities must be handled by the VS. The created recipe object can contain metadata of the recipe and a reference to the recipe itself. As of now, it contains no data.
     	\item GenerateFileForWrite creates a new temporary file object. The GenerateOptions parameter contains the ExternalId of the process. The method returns a FileNodeId and a FileHandle. The temporary file object offers Write and CloseAndCommit methods to transfer binary recipe data. The recipe itself is treated as a file and is referenced in the recipe object.
     \end{itemize}
-    \item Execution
+\subsection{Execution}
+See figure~\ref{fig:runtimeviewexec} for a sequence diagram. Execution adheres to the OPC UA Vision specification.
+    
+\begin{figure}
+    \centering
+    \includegraphics[width=1.2\textwidth]{img/OPCUAVisionPrepareRecipe.pdf}
+    \caption[Sequence diagram of recipe execution]{Sequence diagram of recipe execution of method based OPC UA Vision server. Notes on OPC UA server-side denote the recipe which is not defined by OPC Vision specification but only described. Not all parameters of method signatures are shown. Example values are provided.}
+    \label{fig:runtimeviewexec}
+\end{figure}
     \begin{itemize}
     	\item PrepareRecipe is used to prepare a recipe so that it can be used for starting a job on the vision system. There are several ways the vision system can cope with recipes and their preparation. For example, the vision system can have several recipes prepared for immediate execution or just a single one. PrepareRecipe triggers transition from state Initialized to state Ready of the VS state machine. If the client tries to prepare a detector or image acquisition container, it should return an error.
-    	\item StartSingleJob method triggers the transition from state Ready to state SingleExecution. Parameter RecipeId is the ExternalId of the recipe script. The method returns a JobId which has to be used to query any information about the Job later.
-    	\item AcqImage triggers a camera to acquire an image. In case several cameras are addressable, the method can be overloaded with a CameraId.
-    	\item Test calls the detection routine of the detector service and returns the pose an object.
-    	\item Once the Train method is complete, the OPC server triggers an event to the OPC client containing the JobId and ResultId. It also provides information on whether the result is partial, the job is done and when the result was created.
-    	\item GetResultById is used by the client to query the template matching result via RecipeId and a timeout which aborts the transfer after a given time. It returns metadata about the result and the possible reference to result data containing e.g., the base image. In this case, the detected point can be stored in the result object itself.
+    	\item StartSingleJob method triggers the transition from state Ready to state SingleExecution. Parameter RecipeId is the ExternalId of the recipe script. The method returns a JobId which has to be used to query any information about the Job later. The Job is finished asynchronously and send back an event which includes the pose of the object.
     \end{itemize}
-\end{itemize}
 
 \section{Deployment}
 \subsection{Vision System}
 In a typical industrial environment, the VS is a production line or a single machine. According to the OPC Vision specification, the application can range from simple light barriers to sophisticated pose detection. The recipes presented here are rather designed for the latter purpose, however, can be used for the former, too. On the software side, the VS has to cover recipe, configuration and result management. Depending on the size of the system (number of cameras, data storage, CPU cores...) it can be deployed on a single industrial PC or in a larger factory cloud. The detection and image acquisition services in this work are containerized microservices, so the underlying hardware must support the containerization engine. According to an interview with VDMA experts~\cite{VDMA2015OPC2019}, more and more machine vision functionalities shall be transferred to PLCs. This might call for a different approach of deployment for the recipes at a later stage. The OPC client triggering the job/recipe execution is usually a PLC.
 
 \subsection{Recipe Generator}
-As for the recipe generator, there are more possibilities. Since multiple vendors can add detectors in a hub, it would make sense to make this available in a (virtual private) cloud. The recipe generation might also require excessive computing power, which can be provided by cloud platforms. Furthermore, mobile networks such as the 5G technology offer bandwidth up to 10.000\,MBit/s and latency under 1\,ms, so costs on the infrastructure side can be minimized. A possible drawback is the increased security need for data storage and transmission.
+As for the RG, there are more possibilities. Since multiple vendors can add detectors in a hub, it would make sense to make this available in a (virtual private) cloud. The recipe generation might also require excessive computing power, which can be provided by cloud platforms. Furthermore, mobile networks such as the 5G technology offer bandwidth up to 10.000\,MBit/s and latency under 1\,ms, so costs on the infrastructure side can be minimized. A possible drawback is the increased security need for data storage and transmission.
 
 The generator might also be deployed as part of the vision system. The advantages of this concept are better data protection possibilities and lower latency. The drawback, in this case, is the lower computing power and tougher access for ODS vendors.
 
@@ -76,20 +68,10 @@ The introduced framework relies on a few services with standardized interfaces. 
 The detector containers are called during the execution of a recipe. The services might also be called in sequence. For this communication, a standardized interface is of great help. As for the semantic, two methods Train and Test are defined. For data transport, RPC is a reasonable choice due to its high performing request calls. With the Train and Test methods defined, most of the application logic can reside inside the server (detector container); hence changes of ODM do not cause changes for the client (recipe). The connection between recipe, OPC UA Vision server and cameras is implementation-specific.
 
 \subsection{Recipe Generator}
-The recipe generator needs an interface for the OPC UA Vision server on the one hand and on the other hand, for the recipe generator client. In case the generator is deployed in an industrial environment, it would be reasonable to configure not only the recipe transfer but also the recipe generation via OPC UA to maintain great interoperability within the shopfloor. For instance, CAD models can be created by cameras and automatically sent to the recipe generator. In case it is deployed in a web environment, an interface rather developed for web technologies is advantageous. For instance, RPC with a RESTful adapter could be used for that purpose.
+The RG needs an interface for the OPC UA Vision server on the one hand and on the other hand, for the RG client. In case the generator is deployed in an industrial environment, it would be reasonable to configure not only the recipe transfer but also the recipe generation via OPC UA to maintain great interoperability within the shopfloor. For instance, CAD models can be created by cameras and automatically sent to the RG. In case it is deployed in a web environment, an interface rather developed for web technologies is advantageous. For instance, RPC with a RESTful adapter could be used for that purpose.
 
 \subsection{Image Acquisition}
 As of now, the image acquisition containers do not have a standardized interface. This is due to the plans of the OPC foundation of fulfilling this task in the near future.
 
 \section{Orchestration of Recipe Management}
 The recipe, image acquisition- and  detector containers combine to recipe management of the OPC UA Vision server. As recipes handle image acquisition and detector container calling, one could say it serves as an orchestrator and is a single point of failure. A possible hazard would be applying too much application logic to the recipe; thus it should stay simple and only run necessary OD steps by calling the containers in sequence with a standardized interface. This maximizes the cohesion of the components. In the case of putting several trained detector containers in sequence, the output of the Test method would have to be abstracted since the second and the following containers would receive a pose of an object as input which is unlikely useful. Abstracting output types would again shift application logic to the recipe which should be minimized. Hence, sequencing OD containers should be scoped in a container which handles the sequencing internally and is externally callable via Train \& Test methods.
-
-\section{Roles}
-\label{sec:involvedparties}
-\subsection{Recipe Generator Client}
-
-\subsection{Detector Image Provider}
-
-\subsection{Camera Image Provider}
-
-\subsection{Framework Architect}

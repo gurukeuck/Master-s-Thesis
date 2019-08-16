@@ -35,7 +35,7 @@ This optional method can be used to gather the current configuration of the dete
 \end{figure}
 
 \begin{enumerate}
-    \item \mintinline{Python}{GetConfig} is called by the recipe generator client which could be a machine operator, a PLC or a production planner. \begin{tabbing}
+    \item \mintinline{Python}{GetConfig} is called by the RG client which could be a machine operator, a PLC or a production planner. \begin{tabbing}
             space \= space \= spacespacespace \= spacespacespacespace \= spacespacespace \kill
             \>  GetConfig(\\
             \>  \>  (out)	 \> 	String           \> Config); 
@@ -129,7 +129,7 @@ See figure~\ref{fig:SequenceDiagram-GenRecipe}.
 \end{figure}
 
 \subsection{Transfer}
-\mintinline{Python}{Transfer} fetches the recipe and transmits it over to the OPC UA Vision server recipe management. The server has to be running for a successful method call. In the demo implementation, the recipe storage of the recipe generator and the OPC UA Vision server are the same (see~\ref{fig:SequenceDiagram-Transfer}). A recipe is a pair of docker image names, the list being decorated with an \mintinline{Python}{ExternalId}. The OPC UA Vision client can be a PLC or a human machine operator. See figure \ref{fig:SequenceDiagram-Transfer}.
+\mintinline{Python}{Transfer} fetches the recipe and transmits it over to the OPC UA Vision server recipe management. The server has to be running for a successful method call. In the demo implementation, the recipe storage of the RG and the OPC UA Vision server are the same (see~\ref{fig:SequenceDiagram-Transfer}). A recipe is a pair of docker image names, the list being decorated with an \mintinline{Python}{ExternalId}. The OPC UA Vision client can be a PLC or a human machine operator. See figure \ref{fig:SequenceDiagram-Transfer}.
 
 \begin{enumerate}
     \item \mintinline{Python}{Transfer} instantiates an instance of \mintinline{Python}{Recipe} with \mintinline{Python}{extid} and transfers the gathered image list via an OPC UA Client to the server.
@@ -177,7 +177,7 @@ See figure~\ref{fig:SequenceDiagram-GenRecipe}.
     \>  \>  (in)	 \> 	String          \> ExternalId\\
     \>  \>  (out)	 \> 	String          \> Result ; 
     \end{tabbing}
-    \item OPC UA Server imports the same \mintinline{Python}{Recipe} class as the recipe generator. It instantiates an instance of the class and calls the prepare method.
+    \item OPC UA Server imports the same \mintinline{Python}{Recipe} class as the RG. It instantiates an instance of the class and calls the prepare method.
     \item From here onward the process is analog to the methods described before.
 \end{enumerate}
 
@@ -337,7 +337,7 @@ client.containers.run("ubuntu", "echo hello world")
 
 \subsection{Support for gRPC}
 \label{sec:grpcpython}
-Python is one of the supported languages as it is binded to gRPC's C core.~\cite{gRPC-Documentation2019Last2019} Hence it is easy for the recipe generator to import necessary gRPC stubs. The gRPC client can then establish the channel. We can now call the server as shown here with the Train method:
+Python is one of the supported languages as it is binded to gRPC's C core.~\cite{gRPC-Documentation2019Last2019} Hence it is easy for the RG to import necessary gRPC stubs. The gRPC client can then establish the channel. We can now call the server as shown here with the Train method:
 
 \begin{minted}[breaklines]{python}
 # detector/detector_client.py
@@ -368,7 +368,7 @@ class DetectorClient:
 \end{minted}
 
 \subsection{Support for OPC UA}
-There is an open-source Python SDK for OPC UA.~\cite{N.A.OPC2019} Hence it is easy for the recipe generator to import necessary OPC UA client, whilst the OPC UA client can easily connect to a server:
+There is an open-source Python SDK for OPC UA.~\cite{N.A.OPC2019} Hence it is easy for the RG to import necessary OPC UA client, whilst the OPC UA client can easily connect to a server:
 \begin{minted}{python}
 # opcua/opcua_client.py
 
@@ -393,7 +393,7 @@ As for the demo framework implementation, only dummy detection methods were used
 There are major simplifications made of the OPC UA Vision specification. This is mostly due to the fact that there was no XML nodeset released by the time of implementation. The nodeset would have enabled me to import the entire information model to an OPC UA server. The following sections describe the necessary simplifications in more detail.
 
 \subsection{Recipe Transfer}
-Since the OPC UA Vision server and the recipe generator share their recipe storage and docker registry, it is sufficient to transfer the ExternalId with no additional content required. This might not be the case in a productive environment, where the topology does not allow sharing the same storage and registry. If they share at least the docker registry, then it is possible to reprogram the ExternalId to a string of concatenated docker image names, e.g. detector:latest-camera:latest. If they share none of the two, then additional image content transfer via OPC UA has to be done or the OPC UA Vision server docker registry needs to be managed externally.
+Since the OPC UA Vision server and the RG share their recipe storage and docker registry, it is sufficient to transfer the ExternalId with no additional content required. This might not be the case in a productive environment, where the topology does not allow sharing the same storage and registry. If they share at least the docker registry, then it is possible to reprogram the ExternalId to a string of concatenated docker image names, e.g. detector:latest-camera:latest. If they share none of the two, then additional image content transfer via OPC UA has to be done or the OPC UA Vision server docker registry needs to be managed externally.
 
 \subsection{State Machine and asynchronous Methods}
 According to the OPC UA Vision specification, StartSingleJob is an asynchronous method which triggers recipe execution and the state machine to transit from Ready to SingleExecution (see~\ref{fig:OPCStateMachineAutomatic} and~\ref{fig:runtimeviewexec}). The entire state machine of the OPC UA Vision server was neglected due to the time restrictions of the thesis. As a workaround, all methods were implemented synchronously. In consequence the event containing the detection result is not sent but instead the pose is directly returned by StartSingleJob.

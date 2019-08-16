@@ -1,4 +1,13 @@
 \appendix
+\chapter{Roles}
+\label{sec:involvedparties}
+\extrarowsep=0.6cm\begin{longtabu} to \linewidth{lX}
+    Recipe Generator Client & The instance calling recipe generator methods Train, Test, Transfer, GenRecipe and GetConfig. It needs to have a certain intelligence to decide when to call which methods with the appropriate parameters. In the current state, this will most likely be a production engineer. It is assumed that adding or altering a recipe does not happen very frequently. In later use where more business intelligence resides inside recipe generator, the client could be a component, e.g. a PLC.\\ 
+    Detector Image Provider & The instance developing new ODMs. This could be research teams, community projects like OpenCV or OD specialists of the company using recipe generator. For every new ODM, it is necessary to adhere to the recipe generator API or, for a new pattern of ODMs, update the recipe generator API.\\
+    Camera Image Provider &  	The instance providing new camera hardware and capable software of interacting with recipe generator.\\ 
+    Framework Architect & The author or contributor of recipe generator. He or she is responsible for the SOA design, continuous development and integration and updated proto files. Often the same person as the recipe genetor client.
+\end{longtabu}
+
 
 \chapter{Example of a recipe life cycle}
 To illustrate recipe management, here is a possible life cycle of a recipe taken from the OPC UA Vision specification. \cite{VDMA2018OPCSpecification} Note that the method signatures are not necessarily exact here. 

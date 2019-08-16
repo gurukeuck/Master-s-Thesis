@@ -83,11 +83,11 @@ It is desired to find risks and tradeoffs:
     \item tradeoffs: architectural decisions that have an effect on more than one quality attribute.     For example, the decision to introduce concurrency improves latency but increases the cost of change for the affected modules. 
 \end{itemize}
 
-\section{Architecture Evaluation of Recipe Generator with ATAM Method}
+\section{Architecture Evaluation of RG with ATAM Method}
 In this evaluation chapter, we will cover steps 7 and 8 as described in subsection~\ref{subsec:atamsteps}. As a goal, we will identify risks and tradeoffs. The list is claimed to be incomplete and just covers some important aspects that were considered during service design. Also, in practice, ATAM can be iterated which is dropped here.
 
 \subsection{Quality Attribute Scenarios}
-
+For an explanaition of the sources (i.e., roles), see annex~\ref{sec:involvedparties}.
 {\renewcommand{\arraystretch}{0.7} % vertical spacing between rows
 \begin{longtable}{|P{0.08\linewidth}|P{0.2\linewidth}|P{0.16\linewidth} P{0.44\linewidth}|}
 \caption{Quality Attribute Scenarios}\label{tab:scen}\\
@@ -119,7 +119,7 @@ In this evaluation chapter, we will cover steps 7 and 8 as described in subsecti
    & & Environment:  & Camera provider familiar with Docker, gRPC and camera proto file\\ 
    & & Response:  & New camera is added\\ 
    & & Response Measure:  & No more than four person-days of camera provider team effort is required for the implementation (legal and financial agreements are not included).\\ \hline
- 3 & Modifiability & Source:  & Recipe Generator Client\\
+ 3 & Modifiability & Source:  & RG Client\\
    & & Stimulus:  & Add a new proto file version\\ 
    & & Artifact:  &  Camera or Detector \\ 
    & & Environment:  & A new version of a proto file is necessary due to missing message types\\ 
