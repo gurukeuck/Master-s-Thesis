@@ -2,13 +2,13 @@
 
 \section{The ATAM Method}
 \epigraph{It is better to be vaguely right than exactly wrong.}{Carveth Read (1848 – 1931) philosopher and logician}
-In this chapter, an excerpt of the architecture tradeoff analysis method (ATAM,~\cite{Kazman2000ATAMEvaluation}) as conducted in~\cite{Bianco2007EvaluatingArchitecture} shall be used to evaluate the current implementation and underlying concept. ATAM is a method aimed at illuminating risks in the architecture through the identification of attribute trends, rather than at precise characterizations of measurable quality attribute values.~\cite{Kazman2008ExperienceAnalysis} ATAM focuses on the analysis of quality attributes. Quality attributes, also known as \textbf{nonfunctional requirements}, include usability, performance, scalability, reliability, security and modifiability. Subsection~\ref{subseb:qualatt} provides some generic examples. Subsections~\ref{subsec:atamsteps} and~\ref{subsec:atamgoa} introduce the necessary ATAM steps and the goal of finding risks and tradeoffs. For the introduced framework it is an applicable method as it stays high level. Once it is implemented in an industrial environment, a more quantifiable method is necessary.  
+In this chapter, an excerpt of the architecture tradeoff analysis method (ATAM,~\cite{Kazman1998TheMethod}) as conducted in~\cite{Bianco2007EvaluatingArchitecture} shall be used to evaluate the current implementation and underlying concept. ATAM is a method aimed at illuminating risks in the architecture through the identification of attribute trends, rather than at precise characterizations of measurable quality attribute values~\cite{Kazman1999ExperienceAnalysis}. ATAM focuses on the analysis of quality attributes. Quality attributes, also known as \textbf{nonfunctional requirements}, include usability, performance, scalability, reliability, security and modifiability. Subsection~\ref{subseb:qualatt} provides some generic examples. Subsections~\ref{subsec:atamsteps} and~\ref{subsec:atamgoa} introduce the necessary ATAM steps and the goal of finding risks and tradeoffs. For the introduced framework it is an applicable method as it stays high level. Once it is implemented in an industrial environment, a more quantifiable method is necessary.  
 
-ATAM has been introduced by Kazman in 1998~\cite{Kazman1998TheMethod} at Carnegie Mellon University in Pennsylvania. It was used on at least 18 architectures in the 2000s.~\cite{Bass2007RiskEvaluations} In 2013 Zalewski introduced an updated ATAM method which can be applied at an even earlier stage of architecture evaluation.~\cite{Zalewski2013BeyondSystems}
+ATAM has been introduced by Kazman in 1998 at Carnegie Mellon University in Pennsylvania~\cite{Kazman1998TheMethod}. It was used on at least 18 architectures in the 2000s~\cite{Bass2007RiskEvaluations}. In 2013, Zalewski introduced an updated ATAM method which can be applied at an even earlier stage of architecture evaluation~\cite{Zalewski2013BeyondSystems}.
 
 \subsection{Quality Attributes}
 \label{subseb:qualatt}
-The following example quality attributes are decorated with generic examples which are directly quoted from Appendix A in \textit{Evaluating a Service-Oriented Architecture}.~\cite{Bianco2007EvaluatingArchitecture} 
+The following example quality attributes are decorated with generic examples which are directly quoted from Appendix A in \textit{Evaluating a Service-Oriented Architecture}~\cite{Bianco2007EvaluatingArchitecture}.
 \subsubsection{Performance}
 \begin{itemize}
     \item A sporadic request for service ‘X’ is received by the server during normal operation. The system processes the request in less than ‘Y’ seconds. 
@@ -84,10 +84,11 @@ It is desired to find risks and tradeoffs:
 \end{itemize}
 
 \section{Architecture Evaluation of RG with ATAM Method}
-In this evaluation chapter, we will cover steps 7 and 8 as described in subsection~\ref{subsec:atamsteps}. As a goal, we will identify risks and tradeoffs. The list is claimed to be incomplete and just covers some important aspects that were considered during service design. Also, in practice, ATAM can be iterated which is dropped here.
+In this evaluation chapter, I will cover steps 7 and 8 as described in subsection~\ref{subsec:atamsteps}. As a goal, I will identify risks and tradeoffs. The list is claimed to be incomplete and just covers some important aspects that were considered during service design. Also, in practice, ATAM can be iterated which is dropped here.
 
 \subsection{Quality Attribute Scenarios}
 For an explanaition of the sources (i.e., roles), see annex~\ref{sec:involvedparties}.
+TODO evtl die abbildung in den anhang und die wichtigsten punkte textuell beschreiben
 {\renewcommand{\arraystretch}{0.7} % vertical spacing between rows
 \begin{longtable}{|P{0.08\linewidth}|P{0.2\linewidth}|P{0.16\linewidth} P{0.44\linewidth}|}
 \caption{Quality Attribute Scenarios}\label{tab:scen}\\
@@ -152,7 +153,7 @@ For an explanaition of the sources (i.e., roles), see annex~\ref{sec:involvedpar
 \end{longtable}
 
 \subsection{Architectural Analysis of Scenarios}
-
+TODO evtl die abbildung in den anhang und die wichtigsten punkte textuell beschreiben
 \begin{longtable}{| P{0.2\textwidth} | P{0.74\textwidth} |}
 \caption{Architectural Analysis of Scenarios}\label{tab:scenan}\\
 \hline
@@ -223,3 +224,29 @@ Risks &  A service that is relied on in production reveals itself as malware can
 Tradeoffs & Due to possibly high numbers of services and creative attackers testing every new vendor and service can be a tedious task.\\ \hline
 \end{longtable}
 }
+
+\section{Discussion}
+- OT --> real-time capabilities of the framework?
+    - gRPC specialized for IT, real-time (deterministic, information available exactly when it is needed) is not focused on
+    - ODM have to be real-time capable
+    - hardware is also not ready yet
+
+TODO    \url{https://vorto.eclipse.org/#/details/org.eclipse.vorto:Acceleration:1.0.0}
+    katalog für cameras und odm skizieren
+TODO gRPC echtzeitfähig?
+TODO Diskussion, Zusammenfassung. Roter Faden! Leser abholen! Die drei Punkte aufgreifen:     Generating ODS automatically
+    Handling ODS with varying detection methods
+    Handling ODS with varying interfaces
+ZUSAMMENFASSUNG https://resources.sei.cmu.edu/library/asset-view.cfm?assetid=513908
+The most important results are improved architectures. The output of an ATAM is an outbrief presentation and/or a written report that includes the major findings of the evaluation. These are typically
+
+a set of architectural approaches identified
+a "utility tree"—a hierarchic model of the driving architectural requirements
+the set of scenarios generated and the subset that were mapped onto the architecture
+a set of quality-attribute-specific questions that were applied to the architecture and the responses to these questions
+a set of identified risks
+a set of identified non-risks
+a synthesis of the risks into a set of risk themes that threaten to undermine the business goals for the system
+
+Many people have a stake in a system's architecture, and all of them exert whatever influence they can on the architect(s) to make sure that their goals are addressed. For example, the users want a system that is easy to use and has rich functionality. The maintenance organization wants a system that is easy to modify. The developing organization (as represented by management) wants a system that is easy to build and that will employ the existing work force to good advantage. The customer (who pays the bill) wants the system to be built on time and within budget. All of these stakeholders will benefit from applying the ATAM. And needless to say, the architect is also a primary beneficiary.
+

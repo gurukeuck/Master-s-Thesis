@@ -2,9 +2,11 @@
 
 % use this declaration to set specific page margins
 % \usepackage[a4paper , twoside, lmargin = {2.7cm} , rmargin = {2.9cm} , tmargin = {2.7cm} , bmargin = {4.6cm} ]{geometry}
-\usepackage[a4paper, twoside, bindingoffset=1cm]{geometry}
+\usepackage[a4paper, twoside, bindingoffset=1cm, head=17pt]{geometry}
 %\usepackage[a4paper]{geometry}
-\usepackage[nottoc, notlof, notlot]{tocbibind} % include bibliography in table of contents
+\usepackage[numbers]{natbib} %numbers for numerical citations https://www.overleaf.com/learn/latex/Bibliography_management_with_natbib
+% \usepackage[title]{appendix}
+\usepackage[nottoc]{tocbibind} % include bibliography in table of contents. options: [nottoc, notlof, notlot]
 \usepackage[english]{babel}
 \usepackage{bibgerm}       		% german references
 \usepackage[utf8x]{inputenc} % german characters
@@ -16,25 +18,59 @@
 \usepackage{listings}	% for source code
 \lstset{frameround=fttt,language=Python,numbers=left,breaklines=true}
 \usepackage{subfig}						% two figures next to each other (example: figure 3a), figure 3b)
-\usepackage{scrpage2}					% header and footer line
-\setlength{\headheight}{1.1\baselineskip} 
+% \usepackage{scrpage2}					% header and footer line
+% \setlength{\headheight}{1.1\baselineskip} 
 
-% header and footer line - no header & footer line on pages where a new chapter starts
-\pagestyle{scrheadings}
-%\ohead{Automatic Service Generation}
+% % header and footer line - no header & footer line on pages where a new chapter starts
+% \pagestyle{scrheadings}
+% %\ohead{Automatic Service Generation}
+% \ohead{\headmark}
+% \automark{chapter}
+% \ihead{}
+% % \ihead{\headmark}
+% % \automark{section}
+% % \cfoot[]{\thepage}
+% \ifoot[]{\thepage}
+
+\usepackage[
+% Breite anpassen.
+headwidth=(\the\textwidth+14mm):-7mm:7mm,
+footwidth=(\the\textwidth+14mm):-7mm:7mm,
+% Dicke der Linien festlegen.
+headsepline=0.5pt,
+footsepline=0.5pt,
+% Linien auch im Seitenstil plain anzeigen.
+plainheadsepline=true,
+plainfootsepline=true
+]{scrlayer-scrpage}
+% Alle Inhalte löschen.
+\clearpairofpagestyles
+% Schriftformatierung zurücksetzen.
+\setkomafont{pageheadfoot}{}
+% Linien einfärben.
+\addtokomafont{headsepline}{\color{gray}}
+\addtokomafont{footsepline}{\color{gray}}
+% Statische Inhalte.
 \ohead{\headmark}
-\automark{chapter}
-\ihead{}
-% \ihead{\headmark}
-% \automark{section}
-\cfoot[]{\thepage}
+\ofoot*{\pagemark}
+% Unterschiedliche Inhalte für gerade/ungerade.
+% \refoot*{Thorsten Frommen}
+% \lofoot*{Mein Superduperbuch}
+    % Inhalte festlegen.
+\automark[chapter]{chapter}
+\automark*[section]{}
+% Eigener Seitenstil (keine Inhalte, aber Linien).
+\newpairofpagestyles{preface}{
+\clearpairofpagestyles
+}
+
 %\ifoot{Future Smart Cam, TU Berlin, Fachgebiet AV, 2009}
 
 % set path where images are stored
 \graphicspath{{./img/}}
 
 % \input{./misc/hyphenation} 					% use this file to set explicit hyphenations (doesn't seem to work correctly)
-
+\hyphenation{RecipeIdType}
 %% Useful packages
 % \usepackage{showframe}
 \usepackage{geometry}
@@ -43,6 +79,7 @@
 \usepackage{graphicx}
 \usepackage[colorinlistoftodos]{todonotes}
 %\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{lscape}
 \usepackage{url}
 \usepackage{minted}
 \usepackage{tabu}
@@ -229,25 +266,26 @@
     
     \include{./misc/abstract}
     \thispagestyle{empty}
-    % \cleardoublepage
-    % % \include{./misc/abstract_de}
-    % % \thispagestyle{empty}
+    \cleardoublepage
+    \include{./misc/abstract_de}
+    \thispagestyle{empty}
+    \cleardoublepage
     
     % \setcounter{tocdepth}{2}
     \tableofcontents
-    \thispagestyle{empty}
+    % \thispagestyle{empty}
     
     \listoffigures
-    \thispagestyle{empty}
+    % \thispagestyle{empty}
     
     \listoftables
-    \thispagestyle{empty}
+    % \thispagestyle{empty}
     
     \include{./misc/acronyms}
-    \thispagestyle{empty}
+    % \thispagestyle{empty}
     
     \include{./misc/glossary}
-    \thispagestyle{empty}
+    % \thispagestyle{empty}
 
     
     
@@ -257,7 +295,7 @@
 \parskip=2ex\relax
     \input{./chapters/chapter1}
     \input{./chapters/chapter2}
-    \input{./chapters/chapter3}
+    % \input{./chapters/chapter3}
     \input{./chapters/chapter4}
     \input{./chapters/chapter5}
     \input{./chapters/chapter6}
@@ -267,12 +305,14 @@
 %\backmatter % no page numbering from here
 		
 		% if you want to provide a glossary with explanations of important terms put it in here
+    
+    \bibliographystyle{unsrtnat} %vancouver
+    \bibliography{./bib/references}
 
+% \backmatter
     \input{./misc/annex}
 
-    
-    \bibliographystyle{vancouver}
-    \bibliography{./bib/references}
+
     
 
 

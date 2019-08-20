@@ -1,6 +1,10 @@
+
 \appendix
+% \begin{appendices}
+
 \chapter{Roles}
 \label{sec:involvedparties}
+\pagenumbering{roman}
 \extrarowsep=0.6cm\begin{longtabu} to \linewidth{lX}
     Recipe Generator Client & The instance calling recipe generator methods Train, Test, Transfer, GenRecipe and GetConfig. It needs to have a certain intelligence to decide when to call which methods with the appropriate parameters. In the current state, this will most likely be a production engineer. It is assumed that adding or altering a recipe does not happen very frequently. In later use where more business intelligence resides inside recipe generator, the client could be a component, e.g. a PLC.\\ 
     Detector Image Provider & The instance developing new ODMs. This could be research teams, community projects like OpenCV or OD specialists of the company using recipe generator. For every new ODM, it is necessary to adhere to the recipe generator API or, for a new pattern of ODMs, update the recipe generator API.\\
@@ -9,8 +13,9 @@
 \end{longtabu}
 
 
-\chapter{Example of a recipe life cycle}
-To illustrate recipe management, here is a possible life cycle of a recipe taken from the OPC UA Vision specification. \cite{VDMA2018OPCSpecification} Note that the method signatures are not necessarily exact here. 
+\chapter{Example of a Recipe Life Cycle}
+\label{chap:recipelifecycle}
+To illustrate recipe management, here is a possible life cycle of a recipe taken from the OPC UA Vision specification appendix~\cite{VDMA2018OPC40100-1:2018-11}. Note that the method signatures are not necessarily exact here. 
 \begin{enumerate}
     \item A recipe for ProductId-m is created externally (often centrally). 
     \item The recipe is pushed to the vision system with ExternalId-1, ProductId-m (using AddRecipe())
@@ -60,3 +65,4 @@ To illustrate recipe management, here is a possible life cycle of a recipe taken
 \lstinputlisting[language=protobuf3,style=protobuf]{img/camera.proto}
 
 \endinput
+% \end{appendices}
