@@ -1,75 +1,83 @@
-\chapter{Design Variants of an Object Detection Service \label{cha:chapter3}}
-\label{sec:concecptOverview}
-When designing an SOA for ODS, one has to deliberate about a number of tradeoffs. In this thesis, ODS should be capable of coping with dynamically changing OD algorithms and interfaces. To achieve this, numerous parameters are relevant - semantic, interface, interface adapter, deployment \textit{as} and deployment \textit{in} just to name a few. Several configurations for each of these parameters are possible. In composition with an ODM, they form an ODS. See~\ref{tab:concept} for a morpholigical box illustrating a number of design variants.
+% integriert in chapter 4
 
-\begin{table}[ht]
-    \begin{center}
-      \begin{minipage}{\textwidth}
-        \captionof{table}[SOA Design Possibilities]{Morphological box of the design variants of an ODS. Parameters are marked bold in the first column. Every parameter has possible choices. A combination of choices composes one concept variant, marked as colored lines.}\label{tab:concept} 
-        \begin{tikzpicture}[
-            very thick,
-            nodes={inner sep=\tabcolsep}
-          ]
-          \matrix[
-              matrix of nodes,
-              inner sep=0pt,
-              row sep=\zeilenabstand
-            ](m){
-              \grafik{\textbf{Semantic}}{img/white.png}
-                &\grafik{Existing Standard}{img/white.png}
-                &\grafik{Self Designed}{img/white.png}\\
-              \grafik{\textbf{Integration Pattern}}{img/white.png}
-                &\grafik{Client/Server}{img/white.png}
-                &\grafik{Publish/Subscribe}{img/white.png}
-                &\grafik{Hybrid}{img/white.png}\\
-              \grafik{\textbf{Deployment as}}{img/white.png}
-                &\grafik{Container}{img/white.png}
-                &\grafik{VM}{img/white.png}
-                &\grafik{}{img/white.png}\\
-              \grafik{\textbf{Deployment in}}{img/white.png}
-                &\grafik{Cloud}{img/white.png}
-                &\grafik{Edge}{img/white.png}
-                &\grafik{VS}{img/white.png}\\
-              \grafik{\textbf{...}}{img/white.png}
-                &\grafik{}{img/white.png}
-                &\grafik{}{img/white.png}
-                &\grafik{}{img/white.png}\\
-              &{}&{}&{}&{}\\
-            };
-    % Kopfzeile
-        \node(ul)[anchor=south west] 
-          at ([yshift={\zeilenabstand+\aboverulesep+\belowrulesep}]m.north west)
-          {Parameter};
-        \node(or)[anchor=south east] at (ul.north-|m-1-1.east){Choice
-        };
+
+
+
+
+
+
+% \chapter{Design Variants of an Object Detection Service \label{cha:chapter3}}
+% \label{sec:concecptOverview}
+% When designing an SOA for ODS, one has to deliberate about a number of tradeoffs. In this thesis, ODS should be capable of coping with dynamically changing OD algorithms and interfaces. To achieve this, numerous parameters are relevant - semantic, interface, interface adapter, deployment \textit{as} and deployment \textit{in} just to name a few. Several configurations for each of these parameters are possible. In composition with an ODM, they form an ODS. See~\ref{tab:concept} for a morpholigical box illustrating a number of design variants.
+
+% \begin{table}[ht]
+%     \begin{center}
+%       \begin{minipage}{\textwidth}
+%         \captionof{table}[SOA Design Possibilities]{Morphological box of the design variants of an ODS. Parameters are marked bold in the first column. Every parameter has possible choices. A combination of choices composes one concept variant, marked as colored lines.}\label{tab:concept} 
+%         \begin{tikzpicture}[
+%             very thick,
+%             nodes={inner sep=\tabcolsep}
+%           ]
+%           \matrix[
+%               matrix of nodes,
+%               inner sep=0pt,
+%               row sep=\zeilenabstand
+%             ](m){
+%               \grafik{\textbf{Semantic}}{img/white.png}
+%                 &\grafik{Existing Standard}{img/white.png}
+%                 &\grafik{Self Designed}{img/white.png}\\
+%               \grafik{\textbf{Integration Pattern}}{img/white.png}
+%                 &\grafik{Client/Server}{img/white.png}
+%                 &\grafik{Publish/Subscribe}{img/white.png}
+%                 &\grafik{Hybrid}{img/white.png}\\
+%               \grafik{\textbf{Deployment as}}{img/white.png}
+%                 &\grafik{Container}{img/white.png}
+%                 &\grafik{VM}{img/white.png}
+%                 &\grafik{}{img/white.png}\\
+%               \grafik{\textbf{Deployment in}}{img/white.png}
+%                 &\grafik{Cloud}{img/white.png}
+%                 &\grafik{Edge}{img/white.png}
+%                 &\grafik{VS}{img/white.png}\\
+%               \grafik{\textbf{...}}{img/white.png}
+%                 &\grafik{}{img/white.png}
+%                 &\grafik{}{img/white.png}
+%                 &\grafik{}{img/white.png}\\
+%               &{}&{}&{}&{}\\
+%             };
+%     % Kopfzeile
+%         \node(ul)[anchor=south west] 
+%           at ([yshift={\zeilenabstand+\aboverulesep+\belowrulesep}]m.north west)
+%           {Parameter};
+%         \node(or)[anchor=south east] at (ul.north-|m-1-1.east){Choice
+%         };
     
-    % Tabellenlinien
-        \draw[line width=\lightrulewidth](or.north-|ul.west)--(or.east|-ul.south)
-          ([yshift=-\aboverulesep]ul.south-|m.west)
-            --([yshift=-\aboverulesep]ul.south-|m.east);
-        \draw[line width=\heavyrulewidth]([yshift=\belowrulesep]or.north-|m.west)
-            --([yshift=\belowrulesep]or.north-|m.east)
-          ([yshift={-\aboverulesep-\zeilenabstand}]m.south west)
-            --([yshift={-\aboverulesep-\zeilenabstand}]m.south east);
+%     % Tabellenlinien
+%         \draw[line width=\lightrulewidth](or.north-|ul.west)--(or.east|-ul.south)
+%           ([yshift=-\aboverulesep]ul.south-|m.west)
+%             --([yshift=-\aboverulesep]ul.south-|m.east);
+%         \draw[line width=\heavyrulewidth]([yshift=\belowrulesep]or.north-|m.west)
+%             --([yshift=\belowrulesep]or.north-|m.east)
+%           ([yshift={-\aboverulesep-\zeilenabstand}]m.south west)
+%             --([yshift={-\aboverulesep-\zeilenabstand}]m.south east);
 
-            \verbindungslinie{red}{m-1-3}{m-2-3,m-3-3,m-4-4,m-6-4}
-            \verbindungslinie{blue}{m-1-2}{m-2-2,m-3-2,m-4-2,m-6-2}
-            \foreach \f/\p/\t in {red/m-6-4/Variant 2,blue/m-6-2/Variant 1}
-              \node[\f,below,font=\bfseries]at(\p){\t};
-        \end{tikzpicture}
-      \end{minipage}
-    \end{center}
-\end{table}%
+%             \verbindungslinie{red}{m-1-3}{m-2-3,m-3-3,m-4-4,m-6-4}
+%             \verbindungslinie{blue}{m-1-2}{m-2-2,m-3-2,m-4-2,m-6-2}
+%             \foreach \f/\p/\t in {red/m-6-4/Variant 2,blue/m-6-2/Variant 1}
+%               \node[\f,below,font=\bfseries]at(\p){\t};
+%         \end{tikzpicture}
+%       \end{minipage}
+%     \end{center}
+% \end{table}%
 
 
-Semantic defines the functional communication module of the service. It handles the payload of the communication between server and client. That is depending on definition of methods, resources and possible input/return types. \textit{Google Cloud Vision} (GCV) RPC API~\cite{Google-Cloud-Documentation2018Cloud2018} and to a limited extent\footnote{It rather provides a framework for the ODS, but not the semantic (yet).} OPC UA Vision~\cite{VDMA2018OPC40100-1:2018-11} are two publicly available standards for ODS semantics. In general, resorting to public standards is a good habit due to the already existing user base, detailed documentation, constant development and thorough testing. In contrast to that, one could design the semantic for a service interface on his or her own with the advantage of freedom over all design decisions. However, this would mean a constant update of design work when adapting to new ODM, which is tedious and does not outweigh the advantages of public standards. When comparing OPC UA Vision and GCV RPC API, one can see that the former is meant to be an abstract standard for all kinds of vision systems, the latter is tailored for the GCV service. Through abstraction, the former is more durable than the latter. Also, the OPC Foundation maintains the OPC UA Vision specification and thus focuses on industrial applications and the respective target group. Another way of defining the service would be copying the method signatures and return types of each ODM. This would mean a changing interface towards the client with every new ODM, which is not eligible in the context of the fast-changing world of underlying ODM of the service. Instead, the semantic translation between ODM and service methods should be hidden. 
+% Semantic defines the functional communication module of the service. It handles the payload of the communication between server and client. That is depending on definition of methods, resources and possible input/return types. \textit{Google Cloud Vision} (GCV) RPC API~\cite{Google-Cloud-Documentation2018Cloud2018} and to a limited extent\footnote{It rather provides a framework for the ODS, but not the semantic (yet).} OPC UA Vision~\cite{VDMA2018OPC40100-1:2018-11} are two publicly available standards for ODS semantics. In general, resorting to public standards is a good habit due to the already existing user base, detailed documentation, constant development and thorough testing. In contrast to that, one could design the semantic for a service interface on his or her own with the advantage of freedom over all design decisions. However, this would mean a constant update of design work when adapting to new ODM, which is tedious and does not outweigh the advantages of public standards. When comparing OPC UA Vision and GCV RPC API, one can see that the former is meant to be an abstract standard for all kinds of vision systems, the latter is tailored for the GCV service. Through abstraction, the former is more durable than the latter. Also, the OPC Foundation maintains the OPC UA Vision specification and thus focuses on industrial applications and the respective target group. Another way of defining the service would be copying the method signatures and return types of each ODM. This would mean a changing interface towards the client with every new ODM, which is not eligible in the context of the fast-changing world of underlying ODM of the service. Instead, the semantic translation between ODM and service methods should be hidden. 
 
-The choice among client/server, publish/subscribe or hybrid integration pattern is driven by factors such as the number of services, real-time requirements, buffering of messages, adoption rate of new technologies and new standards in the industry, etc. ~\cite{Bianco2007EvaluatingArchitecture} In practice in turned out that a good integration approach is by starting with a simple client/server pattern and a little number of services and add more sophisticated patterns after critical components have been identified.~\cite{Newman2015BuildingMicroservices}
+% The choice among client/server, publish/subscribe or hybrid integration pattern is driven by factors such as the number of services, real-time requirements, buffering of messages, adoption rate of new technologies and new standards in the industry, etc. ~\cite{Bianco2007EvaluatingArchitecture} In practice in turned out that a good integration approach is by starting with a simple client/server pattern and a little number of services and add more sophisticated patterns after critical components have been identified.~\cite{Newman2015BuildingMicroservices}
 
-Deployment of ODS could be achieved by virtualization in a container, providing a VM or using no encapsulation whatsoever. Especially the latter implies a huge risk of "dependency hell". For a detailed comparison between VM and container, see section~\ref{deploymentoptions}.
+% Deployment of ODS could be achieved by virtualization in a container, providing a VM or using no encapsulation whatsoever. Especially the latter implies a huge risk of "dependency hell". For a detailed comparison between VM and container, see section~\ref{deploymentoptions}.
 
-Choosing where to deploy microservices has an impact on security, availability and reliability. In the past year, edge deployment gained popularity. E.g., Microsoft introduced Azure Stack which lets the user take advantage of all Azure components locally.~\cite{Azure-Documentation2019Was2019}
+% Choosing where to deploy microservices has an impact on security, availability and reliability. In the past year, edge deployment gained popularity. E.g., Microsoft introduced Azure Stack which lets the user take advantage of all Azure components locally.~\cite{Azure-Documentation2019Was2019}
 
-There are many more implementation possibilities such as database integration, orchestration vs. choreography, continuous deployment, service granularity, exception handling, user management and so forth. These aspects are not remarked in the concept phase of this thesis as the main focus is on exchangebility of ODS.
+% There are many more implementation possibilities such as database integration, orchestration vs. choreography, continuous deployment, service granularity, exception handling, user management and so forth. These aspects are not remarked in the concept phase of this thesis as the main focus is on exchangebility of ODS.
 
-The following chapter introduces \textit{recipe generator} (RG), a concept for an ODS framework in an industrial environment.
+% The following chapter introduces \textit{recipe generator} (RG), a concept for an ODS framework in an industrial environment.

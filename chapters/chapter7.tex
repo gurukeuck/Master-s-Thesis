@@ -1,14 +1,18 @@
-\chapter{Conclusion\label{cha:chapter7}}
-
-In this thesis, I tried to generate ODSs with varying detection methods and interfaces automatically. The title divides into three challenges:
+\chapter{Conclusion and Future Research Directions\label{cha:chapter7}}
+\section{Conclusion}
+The aim of this thesis was to automatically generate ODSs with varying detection methods and interfaces. Hence, this results in three challenges:
 \begin{itemize}
     \item Generating ODS automatically
     \item Handling ODS with varying detection methods
     \item Handling ODS with varying interfaces
 \end{itemize}
-In response, I created a SOA concept which tackles these challenges. Generating ODS (semi-)automatically has been undergird with a supporting framework. It helps to combine the necessary components of camera image acquisition, ODMs and returning the pose in a standardized way. These services must adhere to a versioned semantic Train and Test definition, which is generic enough to comprehend a broad set of ODMs. Expanding the semantic to a new version is of little effort.\\
+In response, a SOA concept which tackles these challenges was created. Generating ODS (semi-) automatically has been undergird with a supporting framework. It helps to combine the necessary components of camera image acquisition, ODMs and returning the pose in a standardized way. These services must adhere to a versioned semantic "Train" and "Test" definition which is generic enough to comprehend a broad set of ODMs. Expanding the semantic to a new version is of little effort.
+
 The service interfaces are currently limited to gRPC or REST. Albeit this covers two established interfaces, they lack certain functionality such as message queuing and real-time functionalities. A more holistic implementation is desirable for the future, e.g. with OPC UA over TSN. This would allow for even greater interoperability and reliability.
 
-Further works include fulfilling all OPC UA Vision specification aspects once they are fully released. Especially the drill down to component level and a specification of how to interface cameras will bring about the possibility for high-speed implementation of new components.
+\section{Future Research Directions}
+Further research directions include fulfilling all OPC UA Vision specification aspects once they are fully released. Especially the drill down to component level and a specification of how to interface cameras will offer the possibility for high-speed implementation of new components.
 
 Also, the framework could be upgraded with smart aspects such as choosing the right camera for a detection task or automated training when a new product type is produced. With the help of these features, recipes could be generated automatically.
+
+A very user-friendly way of extending the framework would be utilizing a catalogue of ODMs and possible components. Examples of these catalogues can be found on Eclipse Vorto~\cite{Eclipse2019Vorto2019} or the "yellow pages" for services~\cite{Kretschmer2014TeilnehmerverwaltungSteuerungsplattform}.

@@ -1,4 +1,5 @@
 \chapter{Evaluation\label{cha:chapter6}}
+This chapter structures in two parts. First, risks and tradeoffs of the concept and implementation are illuminated with an established SOA evaluation method. Second, RG is discussed and possible improvements are pointed out.
 
 \section{The ATAM Method}
 \epigraph{It is better to be vaguely right than exactly wrong.}{Carveth Read (1848 – 1931) philosopher and logician}
@@ -151,7 +152,7 @@ TODO evtl die abbildung in den anhang und die wichtigsten punkte textuell beschr
    & & Response  & The malware is detected quickly, best before entering the framework. Necessary information to possibly identify the attacker is logged.\\ 
    & & Response Measure:  & Our system is not operable for not more than an hour.\\ \hline
 \end{longtable}
-
+\newpage
 \subsection{Architectural Analysis of Scenarios}
 TODO evtl die abbildung in den anhang und die wichtigsten punkte textuell beschreiben
 \begin{longtable}{| P{0.2\textwidth} | P{0.74\textwidth} |}
@@ -221,11 +222,55 @@ Business Goal(s) & Offering a secure framework with little downtime. \\ \hline
 Quality Attribute & Security\\ \hline
 Architectural Approaches and Reasoning & The Docker Hub is intended to be accessible by many vendors to ensure a variety of detectors and cameras. Every new vendor has to ensure its integrity. New detectors and cameras have to be tested thoroughly for a possible malware function. Through the standardized interface, a malfunctioning service can best be replaced quickly by an equivalent one offered by another vendor.\\ \hline
 Risks &  A service that is relied on in production reveals itself as malware can be hard to replace in the given time of one hour. Redundant services by multiple vendors can help out in this case.\\ \hline
-Tradeoffs & Due to possibly high numbers of services and creative attackers testing every new vendor and service can be a tedious task.\\ \hline
+Tradeoffs & Due to possibly high numbers of services and creative attackers, testing every new vendor and service can be a tedious task.\\ \hline
 \end{longtable}
 }
 
-\section{Discussion}
+\section{Discussion and Possible Improvements}
+The discussion of RG is structured in the three sub-tasks of this thesis - generating ODS automatically, handling ODS with varying interfaces and handling ODS with varying ODMs. Although the goals intertwine, they are focused on as separately as possible. Every subsection includes means of possible improvements.
+
+\subsection{Generating Object Detection Services Automatically}
+This goal has been reached partly. RG enables the user in composing the necessary services by loading them from the service registry, training the ODS, pushing them back to the registry and finally transferring and executing them. What RG does \textbf{not} do is creating untrained ODM in the first place. Nor does it contain a smart mechanism to choose which ODM is best for a certain OD task which is one of the aspects apart from ODM configuration which requires a high exptertise.
+
+The idea of a future research direction is a device and/or service catalogue. An example for this is the open-source project Eclipse Vorto~\cite{Eclipse2019Vorto2019}. Screenshots are depicted in figures~\ref{fig:vorto} and~\ref{fig:vorto2}. The catalogue helps users describe, share and integrate their services. As the project is community-based, every user can upload content such as cameras, ODMs or data types.
+
+\begin{landscape}
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1.3\textwidth]{img/EclipseVorto.png}
+    \caption[Eclipse Vorto's device catalogue]{Screenshot of Eclipse Vorto's device catalogue. Every device has a self-explaining interface semantic. The catalogue is community based, i.e. everyone can add his or her device~\cite{Eclipse2019Vorto2019}.}
+    \label{fig:vorto}
+\end{figure}
+\end{landscape}
+
+Choosing an applicable ODM for a specific task can then be handled by the community through a rating system. If the user base is big enough, it will be possible to evaluate best practices for camera/ODM/machine/part type combinations.
+
+Moreover, ODS can provide (hyperlinks to) tutorials and offer workshops alongside the ODS to better scale their know-how. The ODMs or their source code do not have to be revealed with the advantage of a lower incentive to add content to the catalogue.
+
+The challenge for this catalogue is to reach a critical mass (i.e., active users) to prosper.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{img/ScreenshotVortoDistanceSensor.png}
+    \caption[Distance sensor in Eclipse Vorto's device catalogue]{Screenshot of a detail view of a distance sensor in Eclipse Vorto's device catalogue. Every device has a self-explaining interface semantic. Data types can be shared between devices~\cite{Eclipse2019Vorto2019}.}
+    \label{fig:vorto2}
+\end{figure}
+
+\subsection{Handling Object Detection Services with Varying Interfaces}
+RG uses gRPC for service communication. There is the possibility to offer a REST gateway~\cite{gRPC-Gateway-Documentation2017Grpc-gateway.2018} as well. This covers a broad range of (web-) services. Still, the framework highly depends on the ODS provider and his ODM configurability to interact with RG. Some ODS providers do not offer a gRPC interface. In this case, the REST gateway would also not find a remedy since it only maps REST to gRPC, not vice versa. Hence, for now RG mainly has to work with open-source ODM. Also, the services are dockerized. This is a convenient way of deployment for ODS that the RG user owns. RG does not yet however give possibility to utilize cloud-based pay-per-use ODS like, e.g., Google cloud vision offers~\cite{Google-Cloud-Documentation2019Google2019-04-26}. A REST client would facilitate RG to work with most cloud-based services.
+- grpc echtzeitfähig
+- andere methode 
+- highly dependent of the ODS provider and his ODM configurability
+- katalog für devices (vorto) und ODM skizzieren (gelbe seiten)
+
+\subsection{Handling Object Detection Services with Varying Object Detection Methods}
+ODS providers need to prepare their method for RG:
+- erste abstrahierung mit train und test. besser wäre wenn man sie verschachtelbar macht.
+- docker
+- eclipse vorto
+- services sind schön logisch entkoppelt . kamera muss alerdings drauf geachtet werden, dass service nicht zu sehr auf hardware zugeschnitten ist 
+- evtl granularisierung erhöhen innerhalb eines ODS um wiederverwendbarkeit zu erhöhen
+
 - OT --> real-time capabilities of the framework?
     - gRPC specialized for IT, real-time (deterministic, information available exactly when it is needed) is not focused on
     - ODM have to be real-time capable

@@ -1,7 +1,7 @@
 \chapter{Concept\label{cha:chapter4}}
 \section{Design Variants of an Object Detection Service}
 \label{sec:concecptOverview}
-When designing a SOA for ODS, one has to deliberate on a number of tradeoffs. For the purpose of this thesis, ODS should be capable of coping with dynamically changing OD algorithms and interfaces. To achieve this, numerous parameters are relevant - semantic, interface, interface adapter, deployment \textit{as} and deployment \textit{in} just to name a few. Several configurations for each of these parameters are possible. In composition with an ODM, they form an ODS. See figure~\ref{tab:concept} for a morpholigical box illustrating a number of design variants.
+When designing a SOA for ODS, one has to deliberate on a number of tradeoffs. For the purpose of this thesis, ODS should be capable of coping with frequently changing OD algorithms and interfaces. To achieve this, numerous parameters are relevant - semantic, interface, interface adapter, deployment \textit{as} and deployment \textit{in} just to name a few. Several configurations for each of these parameters are possible. In composition with an ODM, they form an ODS. See figure~\ref{tab:concept} for a morpholigical box illustrating a number of design variants.
 
 \begin{table}[ht]
     \begin{center}
@@ -62,7 +62,6 @@ When designing a SOA for ODS, one has to deliberate on a number of tradeoffs. Fo
     \end{center}
 \end{table}%
 
-
 Semantic defines the functional communication module of the service. It handles the payload of the communication between server and client. That is depending on definition of methods, resources and possible input/return types. Google cloud vision RPC API~\cite{Google-Cloud-Documentation2018Cloud2018} and to a limited extent\footnote{It rather provides a framework for the ODS, but not the semantic (yet).} OPC UA Vision~\cite{VDMA2018OPC40100-1:2018-11} are two publicly available standards for ODS semantics. In general, resorting to public standards is a good habit due to the already existing user base, detailed documentation, constant development and thorough testing. In contrast to that, one could design the semantic for a service interface on his or her own with the advantage of freedom regarding all design decisions. However, this would mean a constant update of design work when adapting to new ODM, which is tedious and does not outweigh the advantages of public standards. When comparing OPC UA Vision and GCV RPC API, one can see that the former is meant to be an abstract standard for all kinds of vision systems, the latter is tailored for the GCV service. Through abstraction, the former is more durable than the latter. Also, the OPC Foundation maintains the OPC UA Vision specification and thus focuses on industrial applications and the respective target group. Another way of defining the service would be copying the method signatures and return types of each ODM. This would mean a changing interface towards the client with every new ODM, which is not eligible in the context of the fast-changing world of underlying ODM of the service. Instead, the semantic translation between ODM and service methods should be hidden. 
 
 The choice between client/server, publish/subscribe or hybrid integration pattern is driven by factors such as the number of services, real-time requirements, buffering of messages, adoption rate of new technologies and new standards in the industry~\cite{Bianco2007EvaluatingArchitecture}. In practice, a good integration approach involves starting with a simple client/server pattern and a little number of services and add more sophisticated patterns after critical components have been identified~\cite{Newman2015BuildingMicroservices}.
@@ -109,7 +108,7 @@ The following sections describe the concept in more detail.
 Train is a training routine which generates several views or templates from a CAD model. It should be preconfigured by the detector provider, e.g. learning rates of neural networks have to be preset. After training, the detector container includes generated templates or views and is callable with the Test method.  Test requires a camera image for processing the pose of an object aided by the generated templates.  Input and output types are proposed in the implementation and annex~\ref{proto} but can be versioned and altered if needed. Finally, GenerateRecipe puts image acquisition- and detector container into a sequence. When triggered, an image is grabbed and passed to the Test method of the detector. Test outputs the pose of the object in the image.
 
 \subsubsection{Transfer}
-See figure~\ref{fig:runtimeviewgen} for a sequence diagram. Transfer adheres to the OPC UA Vision specification.
+See figure~\ref{fig:runtimeviewgen} for a sequence diagram. Transfer adheres to the OPC UA Vision specification. The OPC UA client in the diagram is RG in the concept.
 \begin{figure}
     \centering
     \includegraphics[height=0.9\textheight]{img/OPCUAVisionAddRecipe.pdf}
