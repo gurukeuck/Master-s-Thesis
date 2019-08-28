@@ -55,6 +55,144 @@ To illustrate recipe management, here is a possible life cycle of a recipe taken
 \end{enumerate}
 
 % \chapter{OPC UA Vision Method Signatures used in this Thesis}
+\chapter{ATAM Evaluation}
+\section{Quality Attribute Scenarios}
+For an explanaition of the sources (i.e., roles), see annex~\ref{sec:involvedparties}.
+{\renewcommand{\arraystretch}{0.7} % vertical spacing between rows
+\begin{longtable}{|P{0.08\linewidth}|P{0.2\linewidth}|P{0.16\linewidth} P{0.44\linewidth}|}
+\caption{Quality Attribute Scenarios}\label{tab:scen}\\
+\hline
+\rowcolor{Gray}
+\textbf{Number} & \textbf{Quality Attribute} & \multicolumn{2}{l|}{\textbf{Scenario}}\\
+\hline
+\endfirsthead
+\multicolumn{4}{c}%
+{\tablename\ \thetable\ -- \textit{Continued}} \\
+\hline
+\rowcolor{Gray}
+\textbf{Number} & \textbf{Quality Attribute} & \multicolumn{2}{l|}{\textbf{Scenario}}\\
+\hline
+\endhead
+\hline \multicolumn{4}{r}{\textit{Continued on next page}} \\
+\endfoot
+\hline
+\endlastfoot
+ 1 & Modifiability & Source:  & Detector Docker Image Provider\\
+   & & Stimulus:  & Add a new detector\\ 
+   & & Artifact:  &  Docker Registry \\ 
+   & & Environment:  & Detector provider familiar with Docker, gRPC and detector proto file\\ 
+   & & Response:  & New detector is added\\ 
+   & & Response Measure:  & No more than five person-days of detector provider team effort is required for the implementation (legal and financial agreements are not included).\\ \hline 
+ 2 & Modifiability & Source:  & Camera Docker Image Provider\\
+   & & Stimulus:  & Add a new camera to the vision system\\ 
+   & & Artifact:  &  Camera \\ 
+   & & Environment:  & Camera provider familiar with Docker, gRPC and camera proto file\\ 
+   & & Response:  & New camera is added\\ 
+   & & Response Measure:  & No more than four person-days of camera provider team effort is required for the implementation (legal and financial agreements are not included).\\ \hline
+ 3 & Modifiability & Source:  & RG Client\\
+   & & Stimulus:  & Add a new proto file version\\ 
+   & & Artifact:  &  Camera or Detector \\ 
+   & & Environment:  & A new version of a proto file is necessary due to missing message types\\ 
+   & & Response:  & New proto file is added\\ 
+   & & Response Measure:  & No more than one person-day of effort is necessary. All existing camera and detector service remain functional.\\ \hline
+ 4 & Interoperability & Source  & Framework Architect\\
+   & & Stimulus:  & Replace or scratch Docker\\ 
+   & & Artifact:  & Detector and Camera Image Docker Containers\\ 
+   & & Environment:  & Docker is not allowed or not possible to use\\ 
+   & & Response:  & Docker is replaced or scratched\\ 
+   & & Response Measure:  & No more than fifteen person-days of framework architect effort is required for the implementation\\ \hline
+ 5 & Performance & Source  & Detector Docker Image Provider\\
+   & & Stimulus:  & Send a file to detector\\ 
+   & & Artifact:  & Detector Docker Container\\ 
+   & & Environment:  & CAD file input not larger than 10\,MB sent to detector\\ 
+   & & Response: & File to detector sent\\ 
+   & & Response Measure:  & The trip time for a request from detector client in the local network to detector during normal operation is less than 2 seconds.\\ \hline
+ 6 & Reliability & Source  & Framework Architect\\
+   & & Stimulus  & Service failure\\ 
+   & & Artifact  & All components\\ 
+   & & Environment  & A sudden failure occurs in the runtime environment of a service.  \\ 
+   & & Response  & After recovery, all transactions are completed or rolled back as appropriate, so the system maintains uncorrupted, persistent data.\\ 
+   & & Response Measure:  & Manual test if data is corrupt or inconsistent.\\ \hline
+ 7 & Security & Source  & A possible attacker\\
+   & & Stimulus  & A malware is included in the system\\ 
+   & & Artifact  & Camera or Detector Docker Container\\ 
+   & & Environment  & We have to face a denial-of-service attack.  \\ 
+   & & Response  & The malware is detected quickly, best before entering the framework. Necessary information to possibly identify the attacker is logged.\\ 
+   & & Response Measure:  & Our system is not operable for not more than an hour.\\ \hline
+\end{longtable}
+\newpage
+
+\section{Architectural Analysis of Scenarios}
+\begin{longtable}{| P{0.2\textwidth} | P{0.74\textwidth} |}
+\caption{Architectural Analysis of Scenarios}\label{tab:scenan}\\
+\hline
+\endfirsthead
+\multicolumn{2}{c}%
+{\tablename\ \thetable\ -- \textit{Continued}} \\
+\hline
+\endhead
+\hline \multicolumn{2}{r}{\textit{Continued on next page}} \\
+\endfoot
+\hline
+\endlastfoot
+\rowcolor{Gray}
+\multicolumn{2}{ |l| }{\textbf{Analysis for Scenario 1}} \\ \hline
+Scenario Summary & New Detector added to Docker Registry in no more than five person-days\\ \hline
+Business Goal(s) & Extending the available object detection possibilities\\ \hline
+Quality Attribute & Modifiability\\ \hline
+Architectural Approaches and Reasoning & Detector communication depends on gRPC which covers many programming languages and a REST gateway. \newline Docker registry can be made easily accessible for the provider and is a well-known technology.\\ \hline
+Risks &  Possible too much of a lock-in effect of both technologies\\ \hline
+Tradeoffs &  The static Train/Test interface might not (yet) be suitable for all detection purposes, although once implemented it is very easy to use and might become more popular as a versioned standard.\\ \hline
+\rowcolor{Gray}
+\multicolumn{2}{ |l| }{\textbf{Analysis for Scenario 2}} \\ \hline
+Scenario Summary & New camera added to vision system in no more than four person-days\\ \hline
+Business Goal(s) & Possibility of heterogeneous camera ecosystem\\ \hline
+Quality Attribute & Modifiability\\ \hline
+Architectural Approaches and Reasoning & Docker container including or alternatively just gRPC server running on camera which allows for many programming languages \\ \hline
+Risks &  The camera firmware can be unmodifiable, thus a middleware is likely to be needed. \\ \hline
+Tradeoffs & In theory, the same underlying technology (Docker + gRPC) can be conveniently used for communication between recipe and camera, but in practice, at least for the camera, this might end up cumbersome without a fitting middleware. \\ \hline
+\rowcolor{Gray}
+\multicolumn{2}{ |l| }{\textbf{Analysis for Scenario 3}} \\ \hline
+Scenario Summary & A new proto file version is added in no more than on person-day.\\ \hline
+Business Goal(s) & Staying up to date with current ODMs\\ \hline
+Quality Attribute & Modifiability\\ \hline
+Architectural Approaches and Reasoning & gRPC offers a convenient way of expanding proto files. As long as no messages are deleted or overwritten, the system remains downward compatible.\\ \hline
+Risks &  None\\ \hline
+Tradeoffs &  The more messages are created, the more overhead will be sent over the channels.\\ \hline
+\rowcolor{Gray}
+\multicolumn{2}{ |l| }{\textbf{Analysis for Scenario 4}} \\ \hline
+Scenario Summary & Replace or scratch Docker in no more than 15 person-days.\\ \hline
+Business Goal(s) & Permit easy integration with new business partners. \\ \hline
+Quality Attribute & Interoperability\\ \hline
+Architectural Approaches and Reasoning & Detector and Camera gRPC servers/clients do not need Docker for successful communication. It offers a huge convenience for sharing them, starting them, handling dependencies, etc. A switch to e.g. Heroku would require a partial rewrite of the framework.\\ \hline
+Risks &  Too much effort included rewriting the framework. Instead, an alternative framework might be used.\\ \hline
+Tradeoffs & If Docker is available, the ease of service administration is very high. If not, the flexibility is higher but requires more effort.\\ \hline
+\rowcolor{Gray}
+\multicolumn{2}{ |l| }{\textbf{Analysis for Scenario 5}} \\ \hline
+Scenario Summary & A 10\,MB file is sent to detector in less than 2 seconds. \\ \hline
+Business Goal(s) & Compatible message transmission speed.\\ \hline
+Quality Attribute & Performance\\ \hline
+Architectural Approaches and Reasoning &  gRPC sends its data via protobufs which are a binary format specialized in high-performance serialization and deserialization. If an image has to be transferred between OPC UA Server and Client, then the emerging Time Sensitive Networking will help facing real-time transmission challenges.\\ \hline
+Risks & If too slow, the process might be the bottleneck in production.\\ \hline
+Tradeoffs &  None\\ \hline
+\rowcolor{Gray}
+\multicolumn{2}{ |l| }{\textbf{Analysis for Scenario 6}} \\ \hline
+Scenario Summary & Uncorrupted, persistent data remains on the system after a service failure.\\ \hline
+Business Goal(s) & Industrial-grade reliability \\ \hline
+Quality Attribute & Reliability\\ \hline
+Architectural Approaches and Reasoning & The framework relies on service choreography and client/server communication. Thus, every component has to ensure uncorrupted and persistent data. In the future, a messaging broker could be introduced for better reliability.\\ \hline
+Risks & Currently, no reliability is granted, so a service failure will result in a failure of most components of the system \\ \hline
+Tradeoffs & Adding a message broker adds reliability but also complexity. \\ \hline
+\rowcolor{Gray}
+\multicolumn{2}{ |l| }{\textbf{Analysis for Scenario 7}} \\ \hline
+Scenario Summary & A denial-of-service attack causes no more than an hour of downtime of the framework.\\ \hline
+Business Goal(s) & Offering a secure framework with little downtime. \\ \hline
+Quality Attribute & Security\\ \hline
+Architectural Approaches and Reasoning & The Docker Hub is intended to be accessible by many vendors to ensure a variety of detectors and cameras. Every new vendor has to ensure its integrity. New detectors and cameras have to be tested thoroughly for a possible malware function. Through the standardized interface, a malfunctioning service can best be replaced quickly by an equivalent one offered by another vendor.\\ \hline
+Risks &  A service that is relied on in production reveals itself as malware can be hard to replace in the given time of one hour. Redundant services by multiple vendors can help out in this case.\\ \hline
+Tradeoffs & Due to possibly high numbers of services and creative attackers, testing every new vendor and service can be a tedious task.\\ \hline
+\end{longtable}
+}
 
 \chapter{Proto Files}
 \label{proto}

@@ -85,152 +85,17 @@ It is desired to find risks and tradeoffs:
 \end{itemize}
 
 \section{Architecture Evaluation of RG with ATAM Method}
-In this evaluation chapter, I will cover steps 7 and 8 as described in subsection~\ref{subsec:atamsteps}. As a goal, I will identify risks and tradeoffs. The list is claimed to be incomplete and just covers some important aspects that were considered during service design. Also, in practice, ATAM can be iterated which is dropped here.
+In this evaluation section, steps 7 and 8 will be covered as described in subsection~\ref{subsec:atamsteps}. Stakeholders each contribute with possible scenarios to address their goals. For example, RG operators want a framework that is easy to modify. The administrators of a manufacturing company want the framework to be safe and secure. 
 
-\subsection{Quality Attribute Scenarios}
-For an explanaition of the sources (i.e., roles), see annex~\ref{sec:involvedparties}.
-TODO evtl die abbildung in den anhang und die wichtigsten punkte textuell beschreiben
-{\renewcommand{\arraystretch}{0.7} % vertical spacing between rows
-\begin{longtable}{|P{0.08\linewidth}|P{0.2\linewidth}|P{0.16\linewidth} P{0.44\linewidth}|}
-\caption{Quality Attribute Scenarios}\label{tab:scen}\\
-\hline
-\rowcolor{Gray}
-\textbf{Number} & \textbf{Quality Attribute} & \multicolumn{2}{l|}{\textbf{Scenario}}\\
-\hline
-\endfirsthead
-\multicolumn{4}{c}%
-{\tablename\ \thetable\ -- \textit{Continued}} \\
-\hline
-\rowcolor{Gray}
-\textbf{Number} & \textbf{Quality Attribute} & \multicolumn{2}{l|}{\textbf{Scenario}}\\
-\hline
-\endhead
-\hline \multicolumn{4}{r}{\textit{Continued on next page}} \\
-\endfoot
-\hline
-\endlastfoot
- 1 & Modifiability & Source:  & Detector Docker Image Provider\\
-   & & Stimulus:  & Add a new detector\\ 
-   & & Artifact:  &  Docker Registry \\ 
-   & & Environment:  & Detector provider familiar with Docker, gRPC and detector proto file\\ 
-   & & Response:  & New detector is added\\ 
-   & & Response Measure:  & No more than five person-days of detector provider team effort is required for the implementation (legal and financial agreements are not included).\\ \hline 
- 2 & Modifiability & Source:  & Camera Docker Image Provider\\
-   & & Stimulus:  & Add a new camera to the vision system\\ 
-   & & Artifact:  &  Camera \\ 
-   & & Environment:  & Camera provider familiar with Docker, gRPC and camera proto file\\ 
-   & & Response:  & New camera is added\\ 
-   & & Response Measure:  & No more than four person-days of camera provider team effort is required for the implementation (legal and financial agreements are not included).\\ \hline
- 3 & Modifiability & Source:  & RG Client\\
-   & & Stimulus:  & Add a new proto file version\\ 
-   & & Artifact:  &  Camera or Detector \\ 
-   & & Environment:  & A new version of a proto file is necessary due to missing message types\\ 
-   & & Response:  & New proto file is added\\ 
-   & & Response Measure:  & No more than one person-day of effort is necessary. All existing camera and detector service remain functional.\\ \hline
- 4 & Interoperability & Source  & Framework Architect\\
-   & & Stimulus:  & Replace or scratch Docker\\ 
-   & & Artifact:  & Detector and Camera Image Docker Containers\\ 
-   & & Environment:  & Docker is not allowed or not possible to use\\ 
-   & & Response:  & Docker is replaced or scratched\\ 
-   & & Response Measure:  & No more than fifteen person-days of framework architect effort is required for the implementation\\ \hline
- 5 & Performance & Source  & Detector Docker Image Provider\\
-   & & Stimulus:  & Send a file to detector\\ 
-   & & Artifact:  & Detector Docker Container\\ 
-   & & Environment:  & CAD file input not larger than 10\,MB sent to detector\\ 
-   & & Response: & File to detector sent\\ 
-   & & Response Measure:  & The trip time for a request from detector client in the local network to detector during normal operation is less than 2 seconds.\\ \hline
- 6 & Reliability & Source  & Framework Architect\\
-   & & Stimulus  & Service failure\\ 
-   & & Artifact  & All components\\ 
-   & & Environment  & A sudden failure occurs in the runtime environment of a service.  \\ 
-   & & Response  & After recovery, all transactions are completed or rolled back as appropriate, so the system maintains uncorrupted, persistent data.\\ 
-   & & Response Measure:  & Manual test if data is corrupt or inconsistent.\\ \hline
- 7 & Security & Source  & A possible attacker\\
-   & & Stimulus  & A malware is included in the system\\ 
-   & & Artifact  & Camera or Detector Docker Container\\ 
-   & & Environment  & We have to face a denial-of-service attack.  \\ 
-   & & Response  & The malware is detected quickly, best before entering the framework. Necessary information to possibly identify the attacker is logged.\\ 
-   & & Response Measure:  & Our system is not operable for not more than an hour.\\ \hline
-\end{longtable}
-\newpage
-\subsection{Architectural Analysis of Scenarios}
-TODO evtl die abbildung in den anhang und die wichtigsten punkte textuell beschreiben
-\begin{longtable}{| P{0.2\textwidth} | P{0.74\textwidth} |}
-\caption{Architectural Analysis of Scenarios}\label{tab:scenan}\\
-\hline
-\endfirsthead
-\multicolumn{2}{c}%
-{\tablename\ \thetable\ -- \textit{Continued}} \\
-\hline
-\endhead
-\hline \multicolumn{2}{r}{\textit{Continued on next page}} \\
-\endfoot
-\hline
-\endlastfoot
-\rowcolor{Gray}
-\multicolumn{2}{ |l| }{\textbf{Analysis for Scenario 1}} \\ \hline
-Scenario Summary & New Detector added to Docker Registry in no more than five person-days\\ \hline
-Business Goal(s) & Extending the available object detection possibilities\\ \hline
-Quality Attribute & Modifiability\\ \hline
-Architectural Approaches and Reasoning & Detector communication depends on gRPC which covers many programming languages and a REST gateway. \newline Docker registry can be made easily accessible for the provider and is a well-known technology.\\ \hline
-Risks &  Possible too much of a lock-in effect of both technologies\\ \hline
-Tradeoffs &  The static Train/Test interface might not (yet) be suitable for all detection purposes, although once implemented it is very easy to use and might become more popular as a versioned standard.\\ \hline
-\rowcolor{Gray}
-\multicolumn{2}{ |l| }{\textbf{Analysis for Scenario 2}} \\ \hline
-Scenario Summary & New camera added to vision system in no more than four person-days\\ \hline
-Business Goal(s) & Possibility of heterogeneous camera ecosystem\\ \hline
-Quality Attribute & Modifiability\\ \hline
-Architectural Approaches and Reasoning & Docker container including or alternatively just gRPC server running on camera which allows for many programming languages \\ \hline
-Risks &  The camera firmware can be unmodifiable, thus a middleware is likely to be needed. \\ \hline
-Tradeoffs & In theory, the same underlying technology (Docker + gRPC) can be conveniently used for communication between recipe and camera, but in practice, at least for the camera, this might end up cumbersome without a fitting middleware. \\ \hline
-\rowcolor{Gray}
-\multicolumn{2}{ |l| }{\textbf{Analysis for Scenario 3}} \\ \hline
-Scenario Summary & A new proto file version is added in no more than on person-day.\\ \hline
-Business Goal(s) & Staying up to date with current ODMs\\ \hline
-Quality Attribute & Modifiability\\ \hline
-Architectural Approaches and Reasoning & gRPC offers a convenient way of expanding proto files. As long as no messages are deleted or overwritten, the system remains downward compatible.\\ \hline
-Risks &  None\\ \hline
-Tradeoffs &  The more messages are created, the more overhead will be sent over the channels.\\ \hline
-\rowcolor{Gray}
-\multicolumn{2}{ |l| }{\textbf{Analysis for Scenario 4}} \\ \hline
-Scenario Summary & Replace or scratch Docker in no more than 15 person-days.\\ \hline
-Business Goal(s) & Permit easy integration with new business partners. \\ \hline
-Quality Attribute & Interoperability\\ \hline
-Architectural Approaches and Reasoning & Detector and Camera gRPC servers/clients do not need Docker for successful communication. It offers a huge convenience for sharing them, starting them, handling dependencies, etc. A switch to e.g. Heroku would require a partial rewrite of the framework.\\ \hline
-Risks &  Too much effort included rewriting the framework. Instead, an alternative framework might be used.\\ \hline
-Tradeoffs & If Docker is available, the ease of service administration is very high. If not, the flexibility is higher but requires more effort.\\ \hline
-\rowcolor{Gray}
-\multicolumn{2}{ |l| }{\textbf{Analysis for Scenario 5}} \\ \hline
-Scenario Summary & A 10\,MB file is sent to detector in less than 2 seconds. \\ \hline
-Business Goal(s) & Compatible message transmission speed.\\ \hline
-Quality Attribute & Performance\\ \hline
-Architectural Approaches and Reasoning &  gRPC sends its data via protobufs which are a binary format specialized in high-performance serialization and deserialization. If an image has to be transferred between OPC UA Server and Client, then the emerging Time Sensitive Networking will help facing real-time transmission challenges.\\ \hline
-Risks & If too slow, the process might the bottleneck in production.\\ \hline
-Tradeoffs &  None\\ \hline
-\rowcolor{Gray}
-\multicolumn{2}{ |l| }{\textbf{Analysis for Scenario 6}} \\ \hline
-Scenario Summary & Uncorrupted, persistent data remains on the system after a service failure.\\ \hline
-Business Goal(s) & Industrial-grade reliability \\ \hline
-Quality Attribute & Reliability\\ \hline
-Architectural Approaches and Reasoning & The framework relies on service choreography and client/server communication. Thus, every component has to ensure uncorrupted and persistent data. In the future, a messaging broker could be introduced for better reliability.\\ \hline
-Risks & Currently, no reliability is granted, so a service failure will result in a failure of most components of the system \\ \hline
-Tradeoffs & Adding a message broker adds reliability but also complexity. \\ \hline
-\rowcolor{Gray}
-\multicolumn{2}{ |l| }{\textbf{Analysis for Scenario 7}} \\ \hline
-Scenario Summary & A denial-of-service attack causes no more than an hour of downtime of the framework.\\ \hline
-Business Goal(s) & Offering a secure framework with little downtime. \\ \hline
-Quality Attribute & Security\\ \hline
-Architectural Approaches and Reasoning & The Docker Hub is intended to be accessible by many vendors to ensure a variety of detectors and cameras. Every new vendor has to ensure its integrity. New detectors and cameras have to be tested thoroughly for a possible malware function. Through the standardized interface, a malfunctioning service can best be replaced quickly by an equivalent one offered by another vendor.\\ \hline
-Risks &  A service that is relied on in production reveals itself as malware can be hard to replace in the given time of one hour. Redundant services by multiple vendors can help out in this case.\\ \hline
-Tradeoffs & Due to possibly high numbers of services and creative attackers, testing every new vendor and service can be a tedious task.\\ \hline
-\end{longtable}
-}
+The scenario list comprising seven entries is claimed to be incomplete and just covers some important aspects that were considered during service design. Also, in practice, ATAM can be iterated which is dropped here. The detailed description of each scenario can be found in table~\ref{tab:scen} with the respective analysis in table~\ref{tab:scenan}. This section provides a synthesis of the illuminated risks and tradeoffs. 
+
+The main quality attribute considered is modifiability. This goal is reached satisfactory. Possible risks are lock-in effects of the used technology, tradeoffs are on a hardware level: the combination of gRPC + Docker might end up cumbersome without a fitting middleware, thus affecting usability and performance. Also, the more messages that are created for upward compatibility, the more overhead will be sent over the channels. The second most important quality attribute for RG is interoperability. RG is designed for the ease of use with Docker containers, but (the implementation) does not rely on it. Not utilizing Docker leads to a higher implementation effort due to necessary rewrites of the framework. Also, the proposed Train/Test abstraction of the ODM has to be accepted by ODM providers, machine operators and the framework architect. The third most important quality attribute is reliability. Since RG currently relies on strong decoupling of concise services, the foundation for it is laid out. On the downside of the client/server integration pattern is the lack of quality-of-service delivery of messages.
 
 \section{Discussion and Possible Improvements}
 The discussion of RG is structured in the three sub-tasks of this thesis - generating ODS automatically, handling ODS with varying interfaces and handling ODS with varying ODMs. Although the goals intertwine, they are focused on as separately as possible. Every subsection includes means of possible improvements.
 
 \subsection{Generating Object Detection Services Automatically}
-This goal has been reached partly. RG enables the user in composing the necessary services by loading them from the service registry, training the ODS, pushing them back to the registry and finally transferring and executing them. What RG does \textbf{not} do is creating untrained ODM in the first place. Nor does it contain a smart mechanism to choose which ODM is best for a certain OD task which is one of the aspects apart from ODM configuration which requires a high exptertise.
+This goal has been reached partly. RG enables the user in composing the necessary services by loading them from the service registry, training the ODS, pushing them back to the registry and finally transferring and executing them. What RG does \textbf{not} do is creating untrained ODM in the first place. Nor does it contain a smart mechanism to choose which ODM is best for a certain OD task. These are aspects which require a high exptertise.
 
 The idea of a future research direction is a device and/or service catalogue. An example for this is the open-source project Eclipse Vorto~\cite{Eclipse2019Vorto2019}. Screenshots are depicted in figures~\ref{fig:vorto} and~\ref{fig:vorto2}. The catalogue helps users describe, share and integrate their services. As the project is community-based, every user can upload content such as cameras, ODMs or data types.
 
@@ -245,53 +110,27 @@ The idea of a future research direction is a device and/or service catalogue. An
 
 Choosing an applicable ODM for a specific task can then be handled by the community through a rating system. If the user base is big enough, it will be possible to evaluate best practices for camera/ODM/machine/part type combinations.
 
-Moreover, ODS can provide (hyperlinks to) tutorials and offer workshops alongside the ODS to better scale their know-how. The ODMs or their source code do not have to be revealed with the advantage of a lower incentive to add content to the catalogue.
+Moreover, ODS can provide (hyperlinks to) tutorials and offer workshops alongside the ODS to better scale their know-how. The ODM source code does not have to be revealed with the advantage of a lower incentive to add content to the catalogue.
 
 The challenge for this catalogue is to reach a critical mass (i.e., active users) to prosper.
 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{img/ScreenshotVortoDistanceSensor.png}
-    \caption[Distance sensor in Eclipse Vorto's device catalogue]{Screenshot of a detail view of a distance sensor in Eclipse Vorto's device catalogue. Every device has a self-explaining interface semantic. Data types can be shared between devices~\cite{Eclipse2019Vorto2019}.}
+    \caption[Distance sensor in Eclipse Vorto's device catalogue]{Screenshot of a detail view of a distance sensor in Eclipse Vorto's device catalogue. Every device has a self-explaining interface semantic. Data types can be shared between devices~\cite{Eclipse2019Vorto2019}. Plugins for mapping to other interface definition languages such as Google Protobuf are available.}
     \label{fig:vorto2}
 \end{figure}
 
 \subsection{Handling Object Detection Services with Varying Interfaces}
-RG uses gRPC for service communication. There is the possibility to offer a REST gateway~\cite{gRPC-Gateway-Documentation2017Grpc-gateway.2018} as well. This covers a broad range of (web-) services. Still, the framework highly depends on the ODS provider and his ODM configurability to interact with RG. Some ODS providers do not offer a gRPC interface. In this case, the REST gateway would also not find a remedy since it only maps REST to gRPC, not vice versa. Hence, for now RG mainly has to work with open-source ODM. Also, the services are dockerized. This is a convenient way of deployment for ODS that the RG user owns. RG does not yet however give possibility to utilize cloud-based pay-per-use ODS like, e.g., Google cloud vision offers~\cite{Google-Cloud-Documentation2019Google2019-04-26}. A REST client would facilitate RG to work with most cloud-based services.
-- grpc echtzeitfähig
-- andere methode 
-- highly dependent of the ODS provider and his ODM configurability
-- katalog für devices (vorto) und ODM skizzieren (gelbe seiten)
+RG uses gRPC for service communication. There is the possibility to offer a REST gateway~\cite{gRPC-Gateway-Documentation2017Grpc-gateway.2018} as well. This covers a broad range of (web-) services. Still, the framework highly depends on the ODS provider and his ODM configurability to interact with RG. Some ODS providers do not offer a gRPC interface. In this case, the REST gateway would also not find a remedy since it only maps REST to gRPC, not vice versa. Hence, for now RG mainly has to work with open-source ODM. 
 
-\subsection{Handling Object Detection Services with Varying Object Detection Methods}
-ODS providers need to prepare their method for RG:
-- erste abstrahierung mit train und test. besser wäre wenn man sie verschachtelbar macht.
-- docker
-- eclipse vorto
-- services sind schön logisch entkoppelt . kamera muss alerdings drauf geachtet werden, dass service nicht zu sehr auf hardware zugeschnitten ist 
-- evtl granularisierung erhöhen innerhalb eines ODS um wiederverwendbarkeit zu erhöhen
+Also, the services are dockerized. This is a convenient way of deployment for ODS that the RG user owns. RG does not yet however give possibility to utilize cloud-based pay-per-use ODS like Google cloud vision offers~\cite{Google-Cloud-Documentation2019Google2019-04-26}. This partly due to the interface semantic abstraction, but also on the protocol. A RG REST client would facilitate RG to work with most cloud-based services, not only the ones that support gRPC like GCV~\cite{Google-Cloud-Documentation2019Google2019-04-26}.
 
-- OT --> real-time capabilities of the framework?
-    - gRPC specialized for IT, real-time (deterministic, information available exactly when it is needed) is not focused on
-    - ODM have to be real-time capable
-    - hardware is also not ready yet
+In the delimitation section of chapter~\ref{cha:chapter1} it was stated that this thesis will not cover real-time aspects. Nonetheless, it should not be disregarded in practice. Assuming TSN becomes a predominant technology in the next years, numerous aspects need to be considered. First, new hardware has to be purchased. That can be machines that are TSN-ready, network switches or network adapters. Moreover, the interface protocols need to be exchanged. As gRPC is a protocol designed for information technology, it focuses on being excessively fast - but not right on time. Lastly, the underlying ODsM need to be designed and tested against real-time requirements. To sum up, in the current state the framework can only be used for non time critical processes.
 
-TODO    \url{https://vorto.eclipse.org/#/details/org.eclipse.vorto:Acceleration:1.0.0}
-    katalog für cameras und odm skizieren
-TODO gRPC echtzeitfähig?
-TODO Diskussion, Zusammenfassung. Roter Faden! Leser abholen! Die drei Punkte aufgreifen:     Generating ODS automatically
-    Handling ODS with varying detection methods
-    Handling ODS with varying interfaces
-ZUSAMMENFASSUNG https://resources.sei.cmu.edu/library/asset-view.cfm?assetid=513908
-The most important results are improved architectures. The output of an ATAM is an outbrief presentation and/or a written report that includes the major findings of the evaluation. These are typically
+\subsection{Handling Object Detection Services with Varying Detection Methods}
+RG's approach of coping with varying ODMs is abstraction. It is shown that modern complex ODMs basically comprise two phases - preparation (Train) and detection (Test). For RG to prosper, one party has to grasp every new ODM to adhere it to the two abstracted methods. That can only happen if the two methods are accepted as generic semantic interfaces. This calls for a standardization organization like the OPC foundation. RG can act as the spark of this fruitful thought. Taken into account how much cost and lock in effects arouse during the fieldbus war~\cite{Felser2002TheBattles}, it is particularly important to get together at an early stage.
 
-a set of architectural approaches identified
-a "utility tree"—a hierarchic model of the driving architectural requirements
-the set of scenarios generated and the subset that were mapped onto the architecture
-a set of quality-attribute-specific questions that were applied to the architecture and the responses to these questions
-a set of identified risks
-a set of identified non-risks
-a synthesis of the risks into a set of risk themes that threaten to undermine the business goals for the system
+RG further relies on strong decoupling of hardware and software. The ODMs can be configured with a file for calibration and OD optimization. When it is implemented, the ODM should be as concise as possible. 
 
-Many people have a stake in a system's architecture, and all of them exert whatever influence they can on the architect(s) to make sure that their goals are addressed. For example, the users want a system that is easy to use and has rich functionality. The maintenance organization wants a system that is easy to modify. The developing organization (as represented by management) wants a system that is easy to build and that will employ the existing work force to good advantage. The customer (who pays the bill) wants the system to be built on time and within budget. All of these stakeholders will benefit from applying the ATAM. And needless to say, the architect is also a primary beneficiary.
-
+The granularity of the services is another important domain that needs to be considered. Trading off between performance and reusability is the challenge here. Currently, RG delivers high performance due to coarse granularity~\cite{Rudorfer:2018:CSG:3284557.3284713}. Due to the strict pose output of the Test method, it is not possible to combine multiple ODMs for a greater task externally. However, the fine-granular services (e.g., edge detection) can be hidden behind the external method. As Docker offers a layered file system, new components can be added simply. This also implies that ODM providers to need do not need to expose their know how and can remain a propietary license.

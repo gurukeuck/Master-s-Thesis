@@ -17,7 +17,7 @@ client.containers.run("ubuntu", "echo hello world")
 
 \subsection{Support for gRPC}
 \label{sec:grpcpython}
-Python is one of the supported languages as it is binded to gRPC's C core.~\cite{gRPC-Documentation2019Last2019} Hence it is easy for the RG to import necessary gRPC stubs. The gRPC client can then establish the channel. We can now call the server as shown here with the Train method:
+Python is one of the supported languages as it is binded to gRPC's C core~\cite{gRPC-Documentation2019Last2019}. Hence it is easy for the RG to import necessary gRPC stubs. The gRPC client can then establish the channel. We can now call the server as shown here with the Train method:
 
 \begin{minted}[breaklines]{python}
 # detector/detector_client.py
@@ -48,7 +48,7 @@ class DetectorClient:
 \end{minted}
 
 \subsection{Support for OPC UA}
-There is an open-source Python SDK for OPC UA.~\cite{FreeOpcUa-Documentation2019OPC2019} Hence it is easy for the RG to import necessary OPC UA client, whilst the OPC UA client can easily connect to a server:
+There is an open-source Python SDK for OPC UA~\cite{FreeOpcUa-Documentation2019OPC2019}. Hence, it is easy for the RG to import an OPC UA client, whilst the OPC UA client can easily connect to a server:
 \begin{minted}{python}
 # opcua/opcua_client.py
 
@@ -239,7 +239,9 @@ See figure~\ref{fig:SequenceDiagram-GenRecipe}.
 See figure~\ref{fig:SequenceDiagram-Test}.
 
 \begin{enumerate}
-    \item OPC UA Vision server creates a \mintinline{Python}{JobId} unique for this job and returns it along with the result.
+    \item OPC UA Vision server creates a \mintinline{Python}{JobId} unique for this job and returns it along with the result.\\
+    
+    \begin{minipage}{\linewidth}
     \begin{tabbing}
     space \= space \= spacespacespace \= spacespacespacespace \= spacespacespace \kill
     \>  StartSingleJob(\\
@@ -247,6 +249,7 @@ See figure~\ref{fig:SequenceDiagram-Test}.
     \>  \>  (out)	 \> 	Dict          \> Pose \\
     \>  \>  (out)	 \> 	String          \> JobId); 
     \end{tabbing}
+    \end{minipage}
     \item 
     \begin{tabbing}
     space \= space \= spacespacespace \= spacespacespacespace \= spacespacespace \kill
@@ -298,7 +301,7 @@ When using RG, only recipe\_generator.py and opc\_ua\_client.py have to be calle
     py path_to_file/recipe_generator.py --help
 \end{minted}
 
-The source code is provided with comments and docstrings where necessary. All Python modules have no GUI, instead, they are command line based. However, the use of, e.g., UA Expert for calling OPC UA Vision methods is possible. 
+The source code is provided with comments and docstrings where necessary. All Python modules have no GUI, instead, they are command line based. However, the use of a graphical OPC UA client such as UAExpert is possible. 
 
 See figures~\ref{fig:Classes} and~\ref{fig:Packages} for an illustration of the used classes and packages in the demo implementation. The UML diagrams were generated automatically with Pyreverse by scanning the source code~\cite{Anclin2008Pyreverse2019}.
 
